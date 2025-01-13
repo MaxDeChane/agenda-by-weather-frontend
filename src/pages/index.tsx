@@ -1,21 +1,21 @@
 import "../app/globals.css";
 import {useState} from "react";
 import DateTimeService from "@/service/date-time-service";
+import WeatherForecast from "@/domain/weather-forecast";
+import HourlyView from "@/components/hourly-view";
+import AgendaWeatherDao from "@/dao/agenda-weather-dao";
 
 const dateTimeService = DateTimeService.instance;
+const agendaWeatherDao = AgendaWeatherDao.instance;
 
 export default function Index() {
 
     const [currentDate, setCurrentDate] = useState(dateTimeService.roundDateDownToDay(new Date()));
+    const [forecastToDisplay, setForecastToDisplay] = useState(() => agendaWeatherDao.makeInitialRequest())
 
     return (
-        <div className="grid grid-rows-[100px_1fr] items-center justify-items-center min-h-screen font-[family-name:var(--font-geist-sans)]">
-            <div className="w-full text-center">
-                The date is {dateTimeService.getFormattedDate(currentDate)}
-            </div>
-            <div className="flex flex-col gap-8 row-start-2 items-center sm:items-start bg-blue-600">
-                More content will go here as well
-            </div>
+        <div className="grid grid-flow-row min-h-screen divide-y font-[family-name:var(--font-geist-sans)]">
+            <HourlyView forecastToDisplay={forecastToDisplay} />
         </div>
     );
 }

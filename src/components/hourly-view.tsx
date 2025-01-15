@@ -1,11 +1,14 @@
 import WeatherForecast from "@/domain/weather-forecast";
 import {JSX} from "react";
+import Agenda from "@/domain/agenda";
 
 export type HourlyViewInput = {
-    readonly forecastToDisplay: WeatherForecast;
+    readonly agenda: Agenda;
 }
 
-export default function HourlyView({forecastToDisplay}: HourlyViewInput) {
+export default function HourlyView({agenda}: HourlyViewInput) {
+
+    let forecastToDisplay = agenda.weatherForecast;
 
     let elementsToDisplay: JSX.Element[] = []
     if(forecastToDisplay && forecastToDisplay.properties && forecastToDisplay.properties.periods) {

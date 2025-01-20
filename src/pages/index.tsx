@@ -1,10 +1,10 @@
 import "../app/globals.css";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import DateTimeService from "@/service/date-time-service";
-import WeatherForecast from "@/domain/weather-forecast";
 import HourlyView from "@/components/hourly-view";
 import AgendaWeatherDao from "@/dao/agenda-weather-dao";
 import UserInfoView from "@/components/user-info-view";
+import Agenda from "@/domain/agenda";
 
 const dateTimeService = DateTimeService.instance;
 const agendaWeatherDao = AgendaWeatherDao.instance;
@@ -12,13 +12,16 @@ const agendaWeatherDao = AgendaWeatherDao.instance;
 export default function Index() {
 
     const [currentDate, setCurrentDate] = useState(dateTimeService.roundDateDownToDay(new Date()));
-    const [agenda, setAgenda] = useState(() => agendaWeatherDao.makeInitialRequest())
+    const [agenda, setAgenda] = useState<Agenda>()
 
-    let componentToDisplay = (agenda.latLon) ? <HourlyView agenda={agenda} /> : <UserInfoView></UserInfoView>
+    // Effect to do only on initial load
+    useEffect(() => {
+        if(!agenda) {
+            agendaWeatherDao.makeInitialRequest().then(agenda => {
+                setAgenda(agenda);
+            })
+        }
+    }, [agenda])
 
-    return (
-        <div className="grid grid-flow-row min-h-screen divide-y font-[family-name:var(--font-geist-sans)]">
-            {componentToDisplay}
-        </div>
-    );
+    return (!agenda) ? <h1>Loading...</h1> : (agenda.latLon) ? <HourlyView agenda={agenda} /> : <UserInfoView setAgenda={setAgenda}></UserInfoView>
 }

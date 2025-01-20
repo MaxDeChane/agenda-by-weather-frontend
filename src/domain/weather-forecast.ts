@@ -32,7 +32,6 @@ export interface Period {
     };
     readonly windSpeed: string
     readonly windDirection: 'N' | 'NE' | 'E' | 'SE' | 'S' | 'SW' | 'W' | 'NW';
-    readonly icon: string;
     readonly shortForecast: string;
     readonly detailedForecast: string;
 }

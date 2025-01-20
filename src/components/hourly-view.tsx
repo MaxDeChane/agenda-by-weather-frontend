@@ -11,7 +11,7 @@ export default function HourlyView({agenda}: HourlyViewInput) {
     let forecastToDisplay = agenda.weatherForecast;
 
     let elementsToDisplay: JSX.Element[] = []
-    if(forecastToDisplay && forecastToDisplay.properties && forecastToDisplay.properties.periods) {
+    if (forecastToDisplay && forecastToDisplay.properties && forecastToDisplay.properties.periods) {
         elementsToDisplay = forecastToDisplay.properties.periods.map((weatherPeriod, index) => {
             return <div key={`ForecastDisplayRowDiv${index}`} className="grid grid-cols-[1fr_7fr] divide-x">
                 <div>
@@ -28,5 +28,7 @@ export default function HourlyView({agenda}: HourlyViewInput) {
         });
     }
 
-    return elementsToDisplay;
+    return <div className="grid grid-flow-row min-h-screen divide-y font-[family-name:var(--font-geist-sans)]">
+        {elementsToDisplay}
+    </div>
 }

@@ -1,3 +1,23 @@
+export const englishTimesIn15MinuteIncrements = Array(25)
+    .fill(0)
+    .map((_, index) => {
+        if (index === 0) {
+            return '12:00 AM'
+        }
+        if(index === 24) {
+            return '11:59 PM'
+        }
+        const hour = index;
+        const period = hour < 12 ? 'AM' : 'PM';
+        const displayHour = hour === 12 ? 12 : hour % 12;
+
+        return Array(4).fill(0).map((_, index) => {
+            const displayMinute = index == 0 ? '00' : 15 * index;
+            return `${displayHour}:${displayMinute} ${period}`;
+        });
+    })
+    .flat();
+
 export default class DateTimeService {
     private static _instance: DateTimeService = new DateTimeService();
 

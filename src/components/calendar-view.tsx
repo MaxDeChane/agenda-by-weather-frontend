@@ -39,7 +39,9 @@ export default function CalendarView() {
             updatedDate.setDate(dayIndex)
             setSelectedDate(updatedDate);
         } else if(isInNextMonth){
-
+            const updatedDate = dateTimeService.moveDateForwardAMonth(selectedDate);
+            updatedDate.setDate(dayIndex)
+            setSelectedDate(updatedDate);
         } else {
             selectedDate.setDate(dayIndex);
             setSelectedDate(new Date(selectedDate));
@@ -71,6 +73,18 @@ export default function CalendarView() {
         dayElements.push(
             <button key={`month${selectedMonth}DayButton${i}`} onClick={() => handleDaySelection(i)} className={dayButtonStyle}>
                 {i}
+            </button>
+        );
+    }
+
+    // Add in the first few days of the next month to round out the calendar week at the end of the month.
+    const nextMonth = (selectedMonth == 11) ? 0 : selectedMonth + 1;
+    // TODO add code to take care of leap years
+    const daysLeftInLastWeekOfMonth = 7 -  new Date(selectedDate.getFullYear(), selectedMonth, selectedMonthDayAmount).getDay();
+    for(let i = 1; i < daysLeftInLastWeekOfMonth; ++i) {
+        dayElements.push(
+            <button key={`month${nextMonth}DayButton${i}`} onClick={() => handleDaySelection(i, false, true)} className="w-10 border">
+                <p className="text-gray-600">{i}</p>
             </button>
         );
     }

@@ -1,7 +1,7 @@
 import {JSX, useState} from "react";
 import DateTimeService from "@/service/date-time-service";
 
-const Months = {
+const MonthNameAndDayAmount = {
     January: 31,
     February: 28, // 29 in leap years
     March: 31,
@@ -25,11 +25,14 @@ export type CalendarViewInput = {
 export default function CalendarView() {
     const [selectedDate, setSelectedDate] = useState(() => new Date());
 
-    const [month, dayAmount] = Object.entries(Months)[selectedDate.getMonth()];
-    const monthIndex = selectedDate.getMonth();
-    const firstDayWeekdayNumber = new Date(selectedDate.getFullYear(), monthIndex, 1).getDay();
-    const previousMonthIndex = monthIndex - 1;
-    const previousMonthInfo = Object.entries(Months)[(previousMonthIndex < 0) ? 11 : previousMonthIndex];
+    const selectedMonth = selectedDate.getMonth();
+    const selectedDay = selectedDate.getDate();
+    const [selectedMonthName, selectedMonthDayAmount] = Object.entries(MonthNameAndDayAmount)[selectedMonth];
+
+    const previousMonth = selectedMonth - 1;
+    const previousMonthNameAndDayAmount = Object.entries(MonthNameAndDayAmount)[(previousMonth < 0) ? 11 : previousMonth];
+
+    const weekdayFirstOfSelectedMonthLandsOn = new Date(selectedDate.getFullYear(), selectedMonth, 1).getDay();
 
     const handleMonthChange = (isBackButtonPress: boolean) => {
         if(isBackButtonPress) {
@@ -39,31 +42,47 @@ export default function CalendarView() {
         }
     }
 
-    const handleDaySelection = (dayIndex: number, ) => {
+    const handleDaySelection = (dayIndex: number, isInPreviousMonth = false, isInNextMonth = false) => {
+        if(isInPreviousMonth) {
+            const updatedDate = dateTimeService.moveDateBackAMonth(selectedDate);
+            updatedDate.setDate(dayIndex)
+            setSelectedDate(updatedDate);
+        } else if(isInNextMonth){
 
+        } else {
+            selectedDate.setDate(dayIndex);
+            setSelectedDate(new Date(selectedDate));
+        }
     }
 
     const dayElements: Array<JSX.Element> = [];
 
-    for(let i = firstDayWeekdayNumber - 1; i >= 0; --i) {
-        dayElements.push(<button onClick={() => handleDaySelection(i)} className="w-10 border">
-            <p className="text-gray-600">{previousMonthInfo[1] - i}</p>
-        </button>
-    )
+    // Count backwards filling in the beginning of the week that this month doesn't cover
+    // with the days from the previous month.
+    for(let i = weekdayFirstOfSelectedMonthLandsOn - 1; i >= 0; --i) {
+        dayElements.push(
+            <button key={`month${previousMonth}DayButton${i}`} onClick={() => handleDaySelection(previousMonthNameAndDayAmount[1] - i, true)} className="w-10 border">
+                <p className="text-gray-600">{previousMonthNameAndDayAmount[1] - i}</p>
+            </button>
+        );
     }
 
-    for (let i = 1; i <= dayAmount; ++i) {
-        dayElements.push(<button key={`dayButton${i}`} className="w-10 border">
-            {i}
-        </button>)
+    for (let i = 1; i <= selectedMonthDayAmount; ++i) {
+        // Gray out the background of the currently selected day
+        const dayButtonStyle = (selectedDay === i) ? "w-10 border bg-gray-600" : "w-10 border";
+        dayElements.push(
+            <button key={`month${selectedMonth}DayButton${i}`} onClick={() => handleDaySelection(i)} className={dayButtonStyle}>
+                {i}
+            </button>
+        );
     }
 
     return (
         <div className="flex flex-col items-center">
             <div className="flex flex-row w-full border">
-                <button onClick={(event: any)=> handleMonthChange(true)}>&#11207;</button>
-                <p className="basis-full text-center">{month}</p>
-                <button onClick={(event: any)=> handleMonthChange(false)}>&#11208;</button>
+                <button onClick={()=> handleMonthChange(true)}>&#11207;</button>
+                <p className="basis-full text-center">{selectedMonthName}</p>
+                <button onClick={()=> handleMonthChange(false)}>&#11208;</button>
             </div>
             <div className='grid grid-cols-7'>
                 {dayElements}

@@ -66,4 +66,36 @@ export default class DateTimeService {
 
         return clonedDate;
     }
+
+    /*
+    Moves the month back one and sets the day to the first of the month.
+     */
+    moveDateBackAMonth(date: Date): Date {
+        const clonedDate = new Date(date)
+
+        // If the passed in date is January then roll back the year as well.
+        if(clonedDate.getMonth() == 0) {
+            clonedDate.setFullYear(clonedDate.getFullYear() - 1, 11, 1);
+        } else {
+            clonedDate.setMonth(clonedDate.getMonth() - 1, 1);
+        }
+
+        return clonedDate;
+    }
+
+    /*
+    Moves the month back one and sets the day to the first of the month.
+     */
+    moveDateForwardAMonth(date: Date): Date {
+        const clonedDate = new Date(date)
+
+        // If the passed in date is December then move the year forward as well.
+        if(clonedDate.getMonth() == 11) {
+            clonedDate.setFullYear(clonedDate.getFullYear() + 1, 0, 1);
+        } else {
+            clonedDate.setMonth(clonedDate.getMonth() + 1, 1);
+        }
+
+        return clonedDate;
+    }
 }

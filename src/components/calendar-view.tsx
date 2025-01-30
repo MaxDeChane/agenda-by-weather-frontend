@@ -25,15 +25,6 @@ export type CalendarViewInput = {
 export default function CalendarView() {
     const [selectedDate, setSelectedDate] = useState(() => new Date());
 
-    const selectedMonth = selectedDate.getMonth();
-    const selectedDay = selectedDate.getDate();
-    const [selectedMonthName, selectedMonthDayAmount] = Object.entries(MonthNameAndDayAmount)[selectedMonth];
-
-    const previousMonth = selectedMonth - 1;
-    const previousMonthNameAndDayAmount = Object.entries(MonthNameAndDayAmount)[(previousMonth < 0) ? 11 : previousMonth];
-
-    const weekdayFirstOfSelectedMonthLandsOn = new Date(selectedDate.getFullYear(), selectedMonth, 1).getDay();
-
     const handleMonthChange = (isBackButtonPress: boolean) => {
         if(isBackButtonPress) {
             setSelectedDate(dateTimeService.moveDateBackAMonth(selectedDate));
@@ -59,6 +50,11 @@ export default function CalendarView() {
 
     // Count backwards filling in the beginning of the week that this month doesn't cover
     // with the days from the previous month.
+    const selectedMonth = selectedDate.getMonth();
+    const previousMonth = (selectedMonth == 0) ? 11 : selectedMonth - 1;
+    const previousMonthNameAndDayAmount = Object.entries(MonthNameAndDayAmount)[previousMonth];
+    // TODO add code to take care of leap years
+    const weekdayFirstOfSelectedMonthLandsOn = new Date(selectedDate.getFullYear(), selectedMonth, 1).getDay();
     for(let i = weekdayFirstOfSelectedMonthLandsOn - 1; i >= 0; --i) {
         dayElements.push(
             <button key={`month${previousMonth}DayButton${i}`} onClick={() => handleDaySelection(previousMonthNameAndDayAmount[1] - i, true)} className="w-10 border">
@@ -67,6 +63,8 @@ export default function CalendarView() {
         );
     }
 
+    const selectedDay = selectedDate.getDate();
+    const [selectedMonthName, selectedMonthDayAmount] = Object.entries(MonthNameAndDayAmount)[selectedMonth];
     for (let i = 1; i <= selectedMonthDayAmount; ++i) {
         // Gray out the background of the currently selected day
         const dayButtonStyle = (selectedDay === i) ? "w-10 border bg-gray-600" : "w-10 border";

@@ -19,11 +19,12 @@ const MonthNameAndDayAmount = {
 const dateTimeService = DateTimeService.instance;
 
 export type CalendarViewInput = {
+    readonly initialSelectedDate: Date;
     readonly daySelectedHandle: (selectDate: Date) => any;
 }
 
-export default function CalendarView() {
-    const [selectedDate, setSelectedDate] = useState(() => new Date());
+export default function CalendarView({initialSelectedDate, daySelectedHandle}: CalendarViewInput) {
+    const [selectedDate, setSelectedDate] = useState(() => initialSelectedDate);
 
     const handleMonthChange = (isBackButtonPress: boolean) => {
         if(isBackButtonPress) {
@@ -34,18 +35,19 @@ export default function CalendarView() {
     }
 
     const handleDaySelection = (dayIndex: number, isInPreviousMonth = false, isInNextMonth = false) => {
+        let updatedDate: Date;
         if(isInPreviousMonth) {
-            const updatedDate = dateTimeService.moveDateBackAMonth(selectedDate);
-            updatedDate.setDate(dayIndex)
-            setSelectedDate(updatedDate);
+            updatedDate = dateTimeService.moveDateBackAMonth(selectedDate);
         } else if(isInNextMonth){
-            const updatedDate = dateTimeService.moveDateForwardAMonth(selectedDate);
-            updatedDate.setDate(dayIndex)
-            setSelectedDate(updatedDate);
+            updatedDate = dateTimeService.moveDateForwardAMonth(selectedDate);
         } else {
-            selectedDate.setDate(dayIndex);
-            setSelectedDate(new Date(selectedDate));
+            updatedDate = new Date(selectedDate);
         }
+
+        updatedDate.setDate(dayIndex);
+        setSelectedDate(updatedDate);
+
+        daySelectedHandle(updatedDate);
     }
 
     const dayElements: Array<JSX.Element> = [];
@@ -90,10 +92,10 @@ export default function CalendarView() {
     }
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center bg-black">
             <div className="flex flex-row w-full border">
                 <button onClick={()=> handleMonthChange(true)}>&#11207;</button>
-                <p className="basis-full text-center">{selectedMonthName}</p>
+                <p className="basis-full text-center">{selectedMonthName}<br/>{selectedDate.getFullYear()}</p>
                 <button onClick={()=> handleMonthChange(false)}>&#11208;</button>
             </div>
             <div className='grid grid-cols-7'>

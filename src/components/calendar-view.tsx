@@ -61,7 +61,7 @@ export default function CalendarView({initialSelectedDate, daySelectedHandle}: C
     const weekdayFirstOfSelectedMonthLandsOn = new Date(selectedDate.getFullYear(), selectedMonth, 1).getDay();
     for(let i = weekdayFirstOfSelectedMonthLandsOn - 1; i >= 0; --i) {
         dayElements.push(
-            <button key={`month${previousMonth}DayButton${i}`} onClick={() => handleDaySelection(previousMonthNameAndDayAmount[1] - i, true)} className="w-10 border">
+            <button key={`month${previousMonth}DayButton${i}`} onClick={() => handleDaySelection(previousMonthNameAndDayAmount[1] - i, true)} className="border">
                 <p className="text-gray-600">{previousMonthNameAndDayAmount[1] - i}</p>
             </button>
         );
@@ -71,7 +71,7 @@ export default function CalendarView({initialSelectedDate, daySelectedHandle}: C
     const [selectedMonthName, selectedMonthDayAmount] = Object.entries(MonthNameAndDayAmount)[selectedMonth];
     for (let i = 1; i <= selectedMonthDayAmount; ++i) {
         // Gray out the background of the currently selected day
-        const dayButtonStyle = (selectedDay === i) ? "w-10 border bg-gray-600" : "w-10 border";
+        const dayButtonStyle = (selectedDay === i) ? "border bg-gray-600" : "border";
         dayElements.push(
             <button key={`month${selectedMonth}DayButton${i}`} onClick={() => handleDaySelection(i)} className={dayButtonStyle}>
                 {i}
@@ -85,20 +85,20 @@ export default function CalendarView({initialSelectedDate, daySelectedHandle}: C
     const daysLeftInLastWeekOfMonth = 7 -  new Date(selectedDate.getFullYear(), selectedMonth, selectedMonthDayAmount).getDay();
     for(let i = 1; i < daysLeftInLastWeekOfMonth; ++i) {
         dayElements.push(
-            <button key={`month${nextMonth}DayButton${i}`} onClick={() => handleDaySelection(i, false, true)} className="w-10 border">
+            <button key={`month${nextMonth}DayButton${i}`} onClick={() => handleDaySelection(i, false, true)} className="border">
                 <p className="text-gray-600">{i}</p>
             </button>
         );
     }
 
     return (
-        <div className="flex flex-col items-center bg-black">
+        <div className="flex flex-col min-w-80 min-h-52 items-center bg-black">
             <div className="flex flex-row w-full border">
                 <button onClick={()=> handleMonthChange(true)}>&#11207;</button>
                 <p className="basis-full text-center">{selectedMonthName}<br/>{selectedDate.getFullYear()}</p>
                 <button onClick={()=> handleMonthChange(false)}>&#11208;</button>
             </div>
-            <div className='grid grid-cols-7'>
+            <div className='grid grid-cols-7 w-full'>
                 {dayElements}
             </div>
         </div>

@@ -1,15 +1,13 @@
-export const englishTimesIn15MinuteIncrements = Array(25)
+export const timeDisplaysIn15MinuteIncrements = Array(24)
     .fill(0)
     .map((_, index) => {
-        if (index === 0) {
-            return '12:00 AM'
-        }
-        if(index === 24) {
-            return '11:59 PM'
-        }
         const hour = index;
         const period = hour < 12 ? 'AM' : 'PM';
-        const displayHour = hour === 12 ? 12 : hour % 12;
+        let displayHour = hour === 12 ? 12 : hour % 12;
+
+        if(displayHour === 0) {
+            displayHour = 12;
+        }
 
         return Array(4).fill(0).map((_, index) => {
             const displayMinute = index == 0 ? '00' : 15 * index;
@@ -51,18 +49,25 @@ export default class DateTimeService {
         // Make sure to clone the date before operating on it as not to change the original
         const clonedDate = new Date(date)
 
-        clonedDate.setHours(0)
+        clonedDate.setHours(0, 0, 0, 0);
         
-        return this.roundDateDownToHour(clonedDate)
+        return clonedDate;
     }
 
     roundDateDownToHour(date: Date): Date {
         // Make sure to clone the date before operating on it as not to change the original
         const clonedDate = new Date(date)
 
-        clonedDate.setMinutes(0);
-        clonedDate.setSeconds(0);
-        clonedDate.setMilliseconds(0);
+        clonedDate.setMinutes(0, 0, 0);
+
+        return clonedDate;
+    }
+
+    roundDateDownToFifteenMinuteInterval(date: Date): Date {
+        // Make sure to clone the date before operating on it as not to change the original
+        const clonedDate = new Date(date)
+        let minutes = clonedDate.getMinutes();
+        clonedDate.setMinutes(minutes - minutes % 15, 0, 0);
 
         return clonedDate;
     }
@@ -97,5 +102,28 @@ export default class DateTimeService {
         }
 
         return clonedDate;
+    }
+
+    /*
+    Will round the minutes of the date forward to 15 minute increments except for anything
+    past 11:45 PM which will be rounded down to 11:45PM.
+     */
+    retrieve15MinuteTimeDisplayIndexForDateRoundingUp(date: Date) {
+        let minuteIndex;
+        if(date.getMinutes() < 15) {
+            minuteIndex = 1;
+        } else if(date.getMinutes() < 30) {
+            minuteIndex = 2;
+        } else if(date.getMinutes() < 45) {
+            minuteIndex = 3;
+        } else if(date.getMinutes() === 0) {
+            minuteIndex = 0;
+        } else {
+            minuteIndex = 4
+        }
+
+        let index = date.getHours() * 4 + minuteIndex;
+
+        return (index < timeDisplaysIn15MinuteIncrements.length) ? index : timeDisplaysIn15MinuteIncrements.length - 1;
     }
 }

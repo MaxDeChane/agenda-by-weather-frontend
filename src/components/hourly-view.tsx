@@ -3,6 +3,7 @@ import Agenda from "@/domain/agenda";
 import HourlyWeatherAgendaRowView from "@/components/hourly-weather-agenda-row-view";
 import GeneralWeatherView from "@/components/general-weather-view";
 import TimeSelectionView from "@/components/time-selection-view";
+import AgendaItems from "@/domain/agenda-items-by-date";
 
 export type HourlyViewInput = {
     readonly agenda: Agenda;
@@ -11,6 +12,8 @@ export type HourlyViewInput = {
 export default function HourlyView({agenda}: HourlyViewInput) {
 
     const [showAddAgendaItemView, setShowAddAgendaItemView] = useState(false);
+    const [agendaItems, setAgendaItems] = useState(() => new AgendaItems());
+
     const generalWeatherPeriodsIndexRef = useRef(0);
 
     let hourlyWeatherForecast = agenda.hourlyWeatherForecast;

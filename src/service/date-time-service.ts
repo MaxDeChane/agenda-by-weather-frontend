@@ -10,6 +10,7 @@ export const timeDisplaysIn15MinuteIncrements = Array(24)
         }
 
         return Array(4).fill(0).map((_, index) => {
+
             const displayMinute = index == 0 ? '00' : 15 * index;
             return `${displayHour}:${displayMinute} ${period}`;
         });
@@ -25,26 +26,6 @@ export default class DateTimeService {
         return this._instance;
     }
 
-    getFormattedDate(date: Date): string {
-        const year = date.getFullYear().toString();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
-        const day = date.getDate().toString().padStart(2, '0');
-      
-        return `${year}-${month}-${day}`;
-    }
-
-    isDateToday(date: Date): boolean {
-        const todaysDate = new Date()
-
-        return this.areDatesEqualByDateOnly(todaysDate, date)
-    }
-
-    areDatesEqualByDateOnly(date: Date, otherDate: Date): boolean {
-        return date.getFullYear() === otherDate.getFullYear() 
-            && date.getMonth() === otherDate.getMonth()
-            && date.getDate() === otherDate.getDate()
-    }
-
     roundDateDownToDay(date: Date): Date {
         // Make sure to clone the date before operating on it as not to change the original
         const clonedDate = new Date(date)
@@ -54,20 +35,11 @@ export default class DateTimeService {
         return clonedDate;
     }
 
-    roundDateDownToHour(date: Date): Date {
-        // Make sure to clone the date before operating on it as not to change the original
-        const clonedDate = new Date(date)
-
-        clonedDate.setMinutes(0, 0, 0);
-
-        return clonedDate;
-    }
-
-    roundDateDownToFifteenMinuteInterval(date: Date): Date {
+    roundDateUpToFifteenMinuteInterval(date: Date): Date {
         // Make sure to clone the date before operating on it as not to change the original
         const clonedDate = new Date(date)
         let minutes = clonedDate.getMinutes();
-        clonedDate.setMinutes(minutes - minutes % 15, 0, 0);
+        clonedDate.setMinutes((minutes - minutes % 15) + 15, 0, 0);
 
         return clonedDate;
     }
@@ -104,9 +76,14 @@ export default class DateTimeService {
         return clonedDate;
     }
 
+    isFirstDateOnOrBeforeSecondDate(firstDate: Date, secondDate: Date): boolean {
+        return firstDate.getFullYear() <= secondDate.getFullYear() &&
+            firstDate.getMonth() <= secondDate.getMonth() &&
+            firstDate.getDate() <= secondDate.getDate();
+    }
+
     /*
-    Will round the minutes of the date forward to 15 minute increments except for anything
-    past 11:45 PM which will be rounded down to 11:45PM.
+    Will round the minutes of the date forward to 15 minute increments.
      */
     retrieve15MinuteTimeDisplayIndexForDateRoundingUp(date: Date) {
         let minuteIndex;
@@ -116,14 +93,12 @@ export default class DateTimeService {
             minuteIndex = 2;
         } else if(date.getMinutes() < 45) {
             minuteIndex = 3;
-        } else if(date.getMinutes() === 0) {
-            minuteIndex = 0;
         } else {
             minuteIndex = 4
         }
 
         let index = date.getHours() * 4 + minuteIndex;
 
-        return (index < timeDisplaysIn15MinuteIncrements.length) ? index : timeDisplaysIn15MinuteIncrements.length - 1;
+        return (index < timeDisplaysIn15MinuteIncrements.length) ? index : 1;
     }
 }

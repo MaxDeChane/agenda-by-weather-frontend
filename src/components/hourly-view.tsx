@@ -2,8 +2,8 @@ import React, {JSX, useRef, useState} from "react";
 import Agenda from "@/domain/agenda";
 import HourlyWeatherAgendaRowView from "@/components/hourly-weather-agenda-row-view";
 import GeneralWeatherView from "@/components/general-weather-view";
-import TimeSelectionView from "@/components/time-selection-view";
 import AgendaItems from "@/domain/agenda-items-by-date";
+import AddAgendaView from "@/components/add-agenda-view";
 
 export type HourlyViewInput = {
     readonly agenda: Agenda;
@@ -25,12 +25,7 @@ export default function HourlyView({agenda}: HourlyViewInput) {
         setShowAddAgendaItemView(!showAddAgendaItemView);
     }
 
-    const addAgendaItemView = showAddAgendaItemView ?
-        <div className="fixed top-1/2 left-1/3 w-1/3 flex flex-col justify-center items-center border bg-black">
-            <h1>Add Agenda Item</h1>
-            <TimeSelectionView startDate={new Date()} endDate={new Date()}/>
-        </div>
-        : <></>;
+    const addAgendaItemView = showAddAgendaItemView ? <AddAgendaView /> : <></>;
 
     if (hourlyWeatherForecast && hourlyWeatherForecast.properties &&
         hourlyWeatherForecast.properties.periods) {

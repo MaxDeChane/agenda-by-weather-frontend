@@ -7,11 +7,11 @@ const dateTimeService = DateTimeService.instance;
 export type TimeSelectionView = {
     readonly startDate: Date;
     readonly endDate: Date;
+    readonly setStartDate: (startDate: Date) => void;
+    readonly setEndDate: (startDate: Date) => void;
 }
 
-export default function TimeSelectionView({startDate, endDate}: TimeSelectionView) {
-    const [selectedStartDate, setSelectedStartDate] = useState(() => startDate);
-    const [selectedEndDate, setSelectedEndDate] = useState(() => endDate);
+export default function TimeSelectionView({startDate, endDate, setStartDate, setEndDate}: TimeSelectionView) {
     const [selectedStartTimeIndex, setSelectedStartTimeIndex] = useState(() => dateTimeService.retrieve15MinuteTimeDisplayIndexForDateRoundingUp(startDate));
     const [selectedEndTimeIndex, setSelectedEndTimeIndex] = useState(() => dateTimeService.retrieve15MinuteTimeDisplayIndexForDateRoundingUp(endDate));
     const [showStartDateSelection, setShowStartDateSelection] = useState(() => false);
@@ -34,12 +34,21 @@ export default function TimeSelectionView({startDate, endDate}: TimeSelectionVie
     }
 
     const handleStartDateSelected = (selectedStartDate: Date) => {
-        setSelectedStartDate(selectedStartDate);
+        setStartDate(selectedStartDate);
+
+        if(!dateTimeService.isFirstDateOnOrBeforeSecondDate(selectedStartDate, endDate)) {
+            setEndDate(new Date(selectedStartDate));
+        }
+
         setShowStartDateSelection(false);
     }
 
     const handleEndDateSelected = (selectedEndDate: Date) => {
-        setSelectedEndDate(selectedEndDate);
+        if(!dateTimeService.isFirstDateOnOrBeforeSecondDate(startDate, selectedEndDate)) {
+            setStartDate(new Date(selectedEndDate));
+        }
+
+        setEndDate(selectedEndDate);
         setShowEndDateSelection(false);
     }
 
@@ -71,12 +80,12 @@ export default function TimeSelectionView({startDate, endDate}: TimeSelectionVie
         <>
             <div className="grid grid-cols-2 w-full">
                 <div>
-                    <p onClick={handleStartDateSelectionClicked}>Start date:<button className="pl-1">{selectedStartDate.toLocaleDateString()}</button></p>
-                    {(showStartDateSelection) ? <div className="absolute"><CalendarView initialSelectedDate={selectedStartDate} daySelectedHandle={handleStartDateSelected} /></div> : <></>}
+                    <p onClick={handleStartDateSelectionClicked}>Start date:<button className="pl-1">{startDate.toLocaleDateString()}</button></p>
+                    {(showStartDateSelection) ? <div className="absolute"><CalendarView initialSelectedDate={startDate} daySelectedHandle={handleStartDateSelected} /></div> : <></>}
                 </div>
                 <div>
-                    <p onClick={handleEndDateSelectionClicked}>End date:<button className="pl-1">{selectedEndDate.toLocaleDateString()}</button></p>
-                    {(showEndDateSelection) ? <div className="absolute"><CalendarView initialSelectedDate={selectedEndDate} daySelectedHandle={handleEndDateSelected}/></div> : <></>}
+                    <p onClick={handleEndDateSelectionClicked}>End date:<button className="pl-1">{endDate.toLocaleDateString()}</button></p>
+                    {(showEndDateSelection) ? <div className="absolute"><CalendarView initialSelectedDate={endDate} daySelectedHandle={handleEndDateSelected}/></div> : <></>}
                 </div>
                 <div>
                     <label htmlFor='startTimeSelect'>Start time:</label>

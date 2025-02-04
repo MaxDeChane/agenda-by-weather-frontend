@@ -1,4 +1,10 @@
-export const timeDisplaysIn15MinuteIncrements = Array(24)
+export interface MetricTimeAndTimeDisplayHolder {
+    readonly hours: number;
+    readonly minutes: number;
+    readonly displayTime: string;
+}
+
+export const metricTimeAndTimeDisplayHolders = Array(24)
     .fill(0)
     .map((_, index) => {
         const hour = index;
@@ -10,9 +16,8 @@ export const timeDisplaysIn15MinuteIncrements = Array(24)
         }
 
         return Array(4).fill(0).map((_, index) => {
-
             const displayMinute = index == 0 ? '00' : 15 * index;
-            return `${displayHour}:${displayMinute} ${period}`;
+            return {hours: hour, minutes: displayMinute, displayTime: `${displayHour}:${displayMinute} ${period}`} as MetricTimeAndTimeDisplayHolder;
         });
     })
     .flat();
@@ -27,12 +32,7 @@ export default class DateTimeService {
     }
 
     roundDateDownToDay(date: Date): Date {
-        // Make sure to clone the date before operating on it as not to change the original
-        const clonedDate = new Date(date)
-
-        clonedDate.setHours(0, 0, 0, 0);
-        
-        return clonedDate;
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
     }
 
     roundDateUpToFifteenMinuteInterval(date: Date): Date {
@@ -45,35 +45,21 @@ export default class DateTimeService {
     }
 
     /*
-    Moves the month back one and sets the day to the first of the month.
+    Moves the month back one and sets the day to the first of the month,
+    but preserves the hours and minutes
      */
     moveDateBackAMonth(date: Date): Date {
-        const clonedDate = new Date(date)
-
-        // If the passed in date is January then roll back the year as well.
-        if(clonedDate.getMonth() == 0) {
-            clonedDate.setFullYear(clonedDate.getFullYear() - 1, 11, 1);
-        } else {
-            clonedDate.setMonth(clonedDate.getMonth() - 1, 1);
-        }
-
-        return clonedDate;
+        return new Date(date.getFullYear(), date.getMonth() - 1, 1,
+            date.getHours(), date.getMinutes());
     }
 
     /*
-    Moves the month back one and sets the day to the first of the month.
+    Moves the month forward one and sets the day to the first of the month,
+    but preserves the hours and minutes
      */
     moveDateForwardAMonth(date: Date): Date {
-        const clonedDate = new Date(date)
-
-        // If the passed in date is December then move the year forward as well.
-        if(clonedDate.getMonth() == 11) {
-            clonedDate.setFullYear(clonedDate.getFullYear() + 1, 0, 1);
-        } else {
-            clonedDate.setMonth(clonedDate.getMonth() + 1, 1);
-        }
-
-        return clonedDate;
+        return new Date(date.getFullYear(), date.getMonth() + 1, 1,
+            date.getHours(), date.getMinutes());
     }
 
     isFirstDateOnOrBeforeSecondDate(firstDate: Date, secondDate: Date): boolean {
@@ -99,6 +85,6 @@ export default class DateTimeService {
 
         let index = date.getHours() * 4 + minuteIndex;
 
-        return (index < timeDisplaysIn15MinuteIncrements.length) ? index : 1;
+        return (index < metricTimeAndTimeDisplayHolders.length) ? index : 1;
     }
 }

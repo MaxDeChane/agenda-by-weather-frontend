@@ -25,7 +25,11 @@ export default function HourlyView({agenda}: HourlyViewInput) {
         setShowAddAgendaItemView(!showAddAgendaItemView);
     }
 
-    const addAgendaItemView = showAddAgendaItemView ? <AddAgendaView /> : <></>;
+    const addAgendaItemView = showAddAgendaItemView ?
+        <AddAgendaView agendaItems={agendaItems}
+                       setAgendaItems={setAgendaItems}
+                       setShowAddAgendaItemView={setShowAddAgendaItemView}/>
+        : <></>;
 
     if (hourlyWeatherForecast && hourlyWeatherForecast.properties &&
         hourlyWeatherForecast.properties.periods) {

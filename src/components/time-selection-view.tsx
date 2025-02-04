@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import DateTimeService, {timeDisplaysIn15MinuteIncrements} from "@/service/date-time-service";
+import DateTimeService, {metricTimeAndTimeDisplayHolders} from "@/service/date-time-service";
 import CalendarView from "@/components/calendar-view";
 
 const dateTimeService = DateTimeService.instance;
@@ -18,10 +18,12 @@ export default function TimeSelectionView({startDate, endDate, setStartDate, set
     const [showEndDateSelection, setShowEndDateSelection] = useState(() => false);
 
     useEffect(() => {
-        // Make sure the meeting start to end always goes in the right direction.
-        // If not then at 2 to the start index for the end index to make sure they do.
-        if(selectedStartTimeIndex <= selectedEndTimeIndex) {
-            setSelectedEndTimeIndex(selectedStartTimeIndex + 2);
+        // Add this in the effect so the start date will always be before the end date.
+        if(selectedEndTimeIndex <= selectedStartTimeIndex) {
+            const clonedDate = new Date(startDate);
+            clonedDate.setMinutes(clonedDate.getMinutes() + 15);
+            setEndDate(clonedDate);
+            setSelectedEndTimeIndex(dateTimeService.retrieve15MinuteTimeDisplayIndexForDateRoundingUp(clonedDate));
         }
     }, [selectedStartTimeIndex, selectedEndTimeIndex])
 
@@ -53,22 +55,33 @@ export default function TimeSelectionView({startDate, endDate, setStartDate, set
     }
 
     const handleStartTimeSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedStartTimeIndex(Number(event.target.value));
-        console.log(`Selected start time is ${event.target.value}`);
+        const startTimeIndex = Number(event.target.value);
+        const clonedStartDate = new Date(startDate);
+        clonedStartDate.setHours(metricTimeAndTimeDisplayHolders[startTimeIndex].hours);
+        clonedStartDate.setMinutes(metricTimeAndTimeDisplayHolders[startTimeIndex].minutes);
+
+        setSelectedStartTimeIndex(startTimeIndex);
+        setStartDate(clonedStartDate);
     };
 
     const handleEndTimeSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedEndTimeIndex(Number(event.target.value));
-        console.log(`Selected end time is ${event.target.value}`);
+        const endTimeIndex = Number(event.target.value);
+        const clonedDate = new Date(endDate);
+        clonedDate.setHours(metricTimeAndTimeDisplayHolders[endTimeIndex].hours);
+        clonedDate.setMinutes(metricTimeAndTimeDisplayHolders[endTimeIndex].minutes);
+
+        setSelectedEndTimeIndex(endTimeIndex);
+        setEndDate(clonedDate);
     };
 
     const createTimeDisplayElements = (isStartTime: boolean) => {
         const key = isStartTime ? 'agendaStartTime' : 'agendaEndTime';
 
-        return timeDisplaysIn15MinuteIncrements.map((englishTime, index) => {
+        return metricTimeAndTimeDisplayHolders.map((metricTimeAndTimeDisplayHolder, index) => {
+            const displayTime = metricTimeAndTimeDisplayHolder.displayTime;
             return (
-                <option key={key + englishTime} value={index}>
-                    {englishTime}
+                <option key={key + displayTime} value={index}>
+                    {displayTime}
                 </option>
             )
         })

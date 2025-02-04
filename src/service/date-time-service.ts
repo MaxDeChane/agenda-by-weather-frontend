@@ -87,4 +87,23 @@ export default class DateTimeService {
 
         return (index < metricTimeAndTimeDisplayHolders.length) ? index : 1;
     }
+
+    /*
+    As the method says this method should only be called after the date has already been
+    rounded to a 15 minute time otherwise the right index will most likely not be returned.
+     */
+    retrieve15MinuteTimeDisplayIndexForDateAfterItWasRounded(date: Date) {
+        let minuteIndex;
+        if(date.getMinutes() === 15) {
+            minuteIndex = 1;
+        } else if(date.getMinutes() === 30) {
+            minuteIndex = 2;
+        } else if(date.getMinutes() === 45) {
+            minuteIndex = 3;
+        } else {
+            minuteIndex = 0
+        }
+
+        return date.getHours() * 4 + minuteIndex;
+    }
 }

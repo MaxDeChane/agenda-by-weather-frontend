@@ -21,13 +21,17 @@ export default function AddAgendaView({agendaItems, setAgendaItems, setShowAddAg
         return endDate;
     });
 
+    const handleAddClick = () => {
+        console.log(`Start date is ${startDate} and End date is ${endDate}`);
+    }
+
     return (
         <div className="fixed top-1/2 left-1/3 w-1/3 flex flex-col justify-center items-center border bg-black">
             <h1>Add Agenda Item</h1>
             <TimeSelectionView startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} />
             <div className="flex flex-row w-full">
                 <button onClick={() => setShowAddAgendaItemView(false)} className="flex-1 border">Cancel</button>
-                <button className="flex-1 border">Add</button>
+                <button onClick={handleAddClick} className="flex-1 border">Add</button>
             </div>
         </div>
     )

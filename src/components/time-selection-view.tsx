@@ -12,8 +12,8 @@ export type TimeSelectionView = {
 }
 
 export default function TimeSelectionView({startDate, endDate, setStartDate, setEndDate}: TimeSelectionView) {
-    const [selectedStartTimeIndex, setSelectedStartTimeIndex] = useState(() => dateTimeService.retrieve15MinuteTimeDisplayIndexForDateRoundingUp(startDate));
-    const [selectedEndTimeIndex, setSelectedEndTimeIndex] = useState(() => dateTimeService.retrieve15MinuteTimeDisplayIndexForDateRoundingUp(endDate));
+    const [selectedStartTimeIndex, setSelectedStartTimeIndex] = useState(() => dateTimeService.retrieve15MinuteTimeDisplayIndexForDateAfterItWasRounded(startDate));
+    const [selectedEndTimeIndex, setSelectedEndTimeIndex] = useState(() => dateTimeService.retrieve15MinuteTimeDisplayIndexForDateAfterItWasRounded(endDate));
     const [showStartDateSelection, setShowStartDateSelection] = useState(() => false);
     const [showEndDateSelection, setShowEndDateSelection] = useState(() => false);
 
@@ -21,9 +21,9 @@ export default function TimeSelectionView({startDate, endDate, setStartDate, set
         // Add this in the effect so the start date will always be before the end date.
         if(selectedEndTimeIndex <= selectedStartTimeIndex) {
             const clonedDate = new Date(startDate);
-            clonedDate.setMinutes(clonedDate.getMinutes() + 15);
+            clonedDate.setMinutes(clonedDate.getMinutes() + 30);
             setEndDate(clonedDate);
-            setSelectedEndTimeIndex(dateTimeService.retrieve15MinuteTimeDisplayIndexForDateRoundingUp(clonedDate));
+            setSelectedEndTimeIndex(dateTimeService.retrieve15MinuteTimeDisplayIndexForDateAfterItWasRounded(clonedDate));
         }
     }, [selectedStartTimeIndex, selectedEndTimeIndex])
 

@@ -2,7 +2,6 @@ import React, {JSX, useRef, useState} from "react";
 import Agenda from "@/domain/agenda";
 import HourlyWeatherAgendaRowView from "@/components/hourly-weather-agenda-row-view";
 import GeneralWeatherView from "@/components/general-weather-view";
-import AgendaItems from "@/domain/agenda-items-by-date";
 import AddAgendaView from "@/components/add-agenda-view";
 
 export type HourlyViewInput = {
@@ -12,7 +11,13 @@ export type HourlyViewInput = {
 export default function HourlyView({agenda}: HourlyViewInput) {
 
     const [showAddAgendaItemView, setShowAddAgendaItemView] = useState(false);
-    const [agendaItems, setAgendaItems] = useState(() => new AgendaItems());
+    const [agendaItems, setAgendaItems] = useState(() => {
+        if(agenda.agendaItems) {
+            return agenda.agendaItems;
+        }
+
+        return []
+    });
 
     const generalWeatherPeriodsIndexRef = useRef(0);
 
@@ -26,8 +31,7 @@ export default function HourlyView({agenda}: HourlyViewInput) {
     }
 
     const addAgendaItemView = showAddAgendaItemView ?
-        <AddAgendaView agendaItems={agendaItems}
-                       setAgendaItems={setAgendaItems}
+        <AddAgendaView agendaLatLon={agenda.latLon} agendaItems={agendaItems} setAgendaItems={setAgendaItems}
                        setShowAddAgendaItemView={setShowAddAgendaItemView}/>
         : <></>;
 

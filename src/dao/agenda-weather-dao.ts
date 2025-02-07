@@ -1,4 +1,5 @@
-import Agenda from "@/domain/agenda";
+import Agenda, {AgendaItem} from "@/domain/agenda";
+import {AddAgendaItemStatusEnum} from "@/domain/add-agenda-item-status";
 
 const fetch = require('fetch-retry')(global.fetch);
 
@@ -19,7 +20,7 @@ export default class AgendaWeatherDao {
         return this._instance;
     }
 
-    private async makeServiceRequest<Request extends AgendaWeatherRequest>(request: Request):Promise<Agenda> {
+    private async makeServiceRequest<Request extends AgendaWeatherRequest, T>(request: Request):Promise<T> {
         return fetch(request.url, {
             retries: 5,
             retryDelay: 10000,
@@ -27,6 +28,7 @@ export default class AgendaWeatherDao {
             method: request.method,
             headers: {
                 'Accept': 'application/json',
+                "Content-Type": "application/json",
             },
             body: (request.body) ? JSON.stringify(request.body) : null
         })
@@ -59,5 +61,9 @@ export default class AgendaWeatherDao {
 
     async updateLatLonOnDefaultAgendaByAddress(address: string): Promise<Agenda> {
         return this.makeServiceRequest({url: AgendaWeatherDao.WEATHER_BASE_URL + '/' + address, method: 'Put'});
+    }
+
+    async addAgendaItemToAgendaByLatLon(latLon: string, agendaItem: AgendaItem): Promise<AddAgendaItemStatusEnum> {
+        return this.makeServiceRequest({url: AgendaWeatherDao.WEATHER_BASE_URL + '/agenda-item/' + latLon, method: 'Put', body: agendaItem});
     }
 }

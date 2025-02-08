@@ -35,24 +35,23 @@ export default function HourlyView({agenda}: HourlyViewInput) {
                        setShowAddAgendaItemView={setShowAddAgendaItemView}/>
         : <></>;
 
-    if (hourlyWeatherForecast && hourlyWeatherForecast.properties &&
-        hourlyWeatherForecast.properties.periods) {
+    if (hourlyWeatherForecast && hourlyWeatherForecast.properties && hourlyWeatherForecast.properties.periods) {
         generalWeatherPeriodsIndexRef.current = 0;
         elementToDisplay =
             <div className="grid grid-flow-row min-h-screen divide-y font-[family-name:var(--font-geist-sans)]">
                 {hourlyWeatherForecast.properties.periods.map((weatherPeriod, index) => {
-                    return <>
+                    return <span key={`WeatherDisplayRowPeriod-${weatherPeriod.startTime}`}>
                         <GeneralWeatherView generalWeatherForecast={generalWeatherForecast}
                                             hourlyWeatherPeriod={weatherPeriod}
                                             generalWeatherForecastPeriodIndexRef={generalWeatherPeriodsIndexRef}/>
                         <HourlyWeatherAgendaRowView weatherPeriod={weatherPeriod} index={index}/>
-                    </>
+                    </span>
                 })}
             </div>
     }
 
     return <>
-            <header className="sticky top-0 h-10 w-full bg-amber-400">
+    <header className="sticky top-0 h-10 w-full bg-amber-400">
                 <button onClick={addAgendaItemClicked} className="h-5 bg-black">Add New Agenda Item</button>
             </header>
             {addAgendaItemView}

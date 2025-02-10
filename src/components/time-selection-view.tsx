@@ -89,26 +89,75 @@ export default function TimeSelectionView({startDate, endDate, setStartDate, set
 
     return (
         <>
-            <div className="grid grid-cols-2 w-full">
-                <div>
-                    <p onClick={handleStartDateSelectionClicked}>Start date:<button className="pl-1">{startDate.toLocaleDateString()}</button></p>
-                    {(showStartDateSelection) ? <div className="absolute"><CalendarView initialSelectedDate={startDate} daySelectedHandle={handleStartDateSelected} /></div> : <></>}
+            <div className="grid grid-cols-2 gap-4 w-full p-4 bg-white rounded-lg shadow-md">
+                {/* Start Date Section */}
+                <div className="space-y-2">
+                    <p
+                        onClick={handleStartDateSelectionClicked}
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                        Start date:
+                        <button className="pl-1 text-blue-600 hover:text-blue-700 focus:outline-none">
+                            {startDate.toLocaleDateString()}
+                        </button>
+                    </p>
+                    {showStartDateSelection && (
+                        <div className="absolute z-10 mt-2">
+                            <CalendarView
+                                initialSelectedDate={startDate}
+                                daySelectedHandle={handleStartDateSelected}
+                            />
+                        </div>
+                    )}
                 </div>
-                <div>
-                    <p onClick={handleEndDateSelectionClicked}>End date:<button className="pl-1">{endDate.toLocaleDateString()}</button></p>
-                    {(showEndDateSelection) ? <div className="absolute"><CalendarView initialSelectedDate={endDate} daySelectedHandle={handleEndDateSelected}/></div> : <></>}
+
+                {/* End Date Section */}
+                <div className="space-y-2">
+                    <p
+                        onClick={handleEndDateSelectionClicked}
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                        End date:
+                        <button className="pl-1 text-blue-600 hover:text-blue-700 focus:outline-none">
+                            {endDate.toLocaleDateString()}
+                        </button>
+                    </p>
+                    {showEndDateSelection && (
+                        <div className="absolute z-10 mt-2">
+                            <CalendarView
+                                initialSelectedDate={endDate}
+                                daySelectedHandle={handleEndDateSelected}
+                            />
+                        </div>
+                    )}
                 </div>
-                <div>
-                    <label htmlFor='startTimeSelect'>Start time:</label>
-                    <select id='startTimeSelect' value={selectedStartTimeIndex}
-                            onChange={handleStartTimeSelection} className="text-center text-black">
+
+                {/* Start Time Section */}
+                <div className="space-y-2">
+                    <label htmlFor="startTimeSelect" className="block text-sm font-medium text-gray-700">
+                        Start time:
+                    </label>
+                    <select
+                        id="startTimeSelect"
+                        value={selectedStartTimeIndex}
+                        onChange={handleStartTimeSelection}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                    >
                         {createTimeDisplayElements(true)}
                     </select>
                 </div>
-                <div>
-                    <label htmlFor='endTimeSelect'>End time:</label>
-                    <select id='endTimeSelect' value={selectedEndTimeIndex} onChange={handleEndTimeSelection}
-                            className="text-center text-black">
+
+                {/* End Time Section */}
+                <div className="space-y-2">
+                    <label htmlFor="endTimeSelect" className="block text-sm font-medium text-gray-700">
+                        End time:
+                    </label>
+                    <select
+                        id="endTimeSelect"
+                        value={selectedEndTimeIndex}
+                        onChange={handleEndTimeSelection}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                    >
                         {createTimeDisplayElements(false)}
                     </select>
                 </div>

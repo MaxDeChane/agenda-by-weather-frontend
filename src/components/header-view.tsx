@@ -1,6 +1,7 @@
 // components/Header.tsx
 'use client'; // Mark as a Client Component
 import React, { useState } from 'react';
+import AddAgendaView from "@/components/add-agenda-view";
 
 export default function HeaderView() {
     // State to manage which modal is open
@@ -28,7 +29,7 @@ export default function HeaderView() {
                         onClick={() => setOpenModal('addAgendaItem')}
                         className="text-gray-700 hover:text-gray-900 transition-colors"
                     >
-                        Services
+                        Add Agenda Item
                     </button>
                     <button
                         onClick={() => setOpenModal('contact')}
@@ -48,7 +49,7 @@ export default function HeaderView() {
 
             {openModal === 'addAgendaItem' && (
                 <Modal onClose={closeModal} title="Add Agenda Item">
-                    <p>This is the Services modal content.</p>
+                    <AddAgendaView closeModal={closeModal} />
                 </Modal>
             )}
 
@@ -64,7 +65,7 @@ export default function HeaderView() {
 // Reusable Modal Component
 const Modal = ({onClose, title, children}: { onClose: () => void; title: string; children: React.ReactNode}) => {
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-black">
             <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold">{title}</h2>

@@ -92,13 +92,30 @@ export default function CalendarView({initialSelectedDate, daySelectedHandle}: C
     }
 
     return (
-        <div className="flex flex-col min-w-80 min-h-52 items-center bg-black">
-            <div className="flex flex-row w-full border">
-                <button onClick={()=> handleMonthChange(true)}>&#11207;</button>
-                <p className="basis-full text-center">{selectedMonthName}<br/>{selectedDate.getFullYear()}</p>
-                <button onClick={()=> handleMonthChange(false)}>&#11208;</button>
+        <div className="flex flex-col min-w-80 min-h-52 items-center bg-white rounded-lg shadow-md overflow-hidden">
+            {/* Month Navigation Header */}
+            <div className="flex flex-row w-full border-b border-gray-200 p-4 bg-gray-50">
+                <button
+                    onClick={() => handleMonthChange(true)}
+                    className="text-gray-600 hover:text-gray-900 focus:outline-none"
+                >
+                    &#11207; {/* Left arrow */}
+                </button>
+                <p className="flex-1 text-center text-lg font-semibold text-gray-800">
+                    {selectedMonthName}
+                    <br/>
+                    <span className="text-sm font-normal text-gray-600">{selectedDate.getFullYear()}</span>
+                </p>
+                <button
+                    onClick={() => handleMonthChange(false)}
+                    className="text-gray-600 hover:text-gray-900 focus:outline-none"
+                >
+                    &#11208; {/* Right arrow */}
+                </button>
             </div>
-            <div className='grid grid-cols-7 w-full'>
+
+            {/* Days Grid */}
+            <div className="grid grid-cols-7 w-full p-4 gap-2">
                 {dayElements}
             </div>
         </div>

@@ -88,30 +88,4 @@ describe("DateTimeServiceTests", () => {
             expect(classUnderTest.isFirstDateOnOrBeforeSecondDate(firstDate, secondDate)).toBeFalsy();
         })
     })
-
-    describe("retrieve15MinuteTimeDisplayIndexForDateRoundingUp", () => {
-        test("DateWithTimeSetTo1200AM_Index0", () => {
-            testDate.setHours(0, 0, 0, 0);
-            expect(classUnderTest.retrieve15MinuteTimeDisplayIndexForDateRoundingUp(testDate))
-                .toEqual(1);
-        })
-
-        test("DateWithTimeSetTo130PM_Index54", () => {
-            testDate.setHours(13, 30, 0, 0);
-            expect(classUnderTest.retrieve15MinuteTimeDisplayIndexForDateRoundingUp(testDate))
-                .toEqual(55);
-        })
-
-        test("DateWithTimeSetTo1159AM_Index48", () => {
-            testDate.setHours(11, 59, 0, 0);
-            expect(classUnderTest.retrieve15MinuteTimeDisplayIndexForDateRoundingUp(testDate))
-                .toEqual(48);
-        })
-
-        test("DateWithTimeSetTo1146PM_Index1", () => {
-            testDate.setHours(23, 45, 0, 0);
-            expect(classUnderTest.retrieve15MinuteTimeDisplayIndexForDateRoundingUp(testDate))
-                .toEqual(1);
-        })
-    })
 })

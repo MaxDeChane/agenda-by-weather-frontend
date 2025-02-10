@@ -15,6 +15,8 @@ export default function HourlyView() {
         return <></>
     }
 
+    console.log(`Agenda items are ${agenda.agendaItems}`)
+
     let hourlyWeatherForecast = agenda.hourlyWeatherForecast;
     let generalWeatherForecast = agenda.generalWeatherForecast;
 

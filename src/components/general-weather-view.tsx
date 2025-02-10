@@ -1,5 +1,5 @@
 import WeatherForecast, {Period} from "@/domain/weather-forecast";
-import {RefObject, useEffect, useRef, useState} from "react";
+import {RefObject, useState} from "react";
 
 export type GeneralWeatherViewInput = {
     readonly generalWeatherForecast: WeatherForecast | undefined;

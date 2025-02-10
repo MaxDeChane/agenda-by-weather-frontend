@@ -1,9 +1,10 @@
 import React, {useContext, useEffect, useState} from "react";
 import TimeSelectionView from "@/components/time-selection-view";
 import DateTimeService from "@/service/date-time-service";
-import {AgendaItem} from "@/domain/agenda";
+import Agenda, {AgendaItem} from "@/domain/agenda";
 import AgendaWeatherDao from "@/dao/agenda-weather-dao";
 import AgendaContext from "@/contexts/agenda-context";
+import {AddAgendaItemStatusEnum} from "@/domain/add-agenda-item-status";
 
 const dateTimeService = DateTimeService.instance;
 const agendaWeatherDao = AgendaWeatherDao.instance;
@@ -42,6 +43,25 @@ export default function AddAgendaView({closeModal}: AddAgendaViewInput) {
         console.log(`Attempting to add agenda item: ${agendaItem}`);
         agendaWeatherDao.addAgendaItemToAgendaByLatLon(agenda.latLon, agendaItem).then((addAgendaItemStatusEnum) => {
             console.log(`Response from adding agenda item is: ${addAgendaItemStatusEnum}`);
+
+            // TODO handle error cases here
+
+            switch (addAgendaItemStatusEnum) {
+                case AddAgendaItemStatusEnum.ADDED:
+                    let updatedAgenda;
+                    if(!agenda.agendaItems) {
+                        updatedAgenda = {...agenda, agendaItems: [agendaItem]} as Agenda;
+                    } else {
+                        updatedAgenda = {...agenda} as Agenda;
+                        updatedAgenda.agendaItems.push(agendaItem);
+                    }
+
+                    setAgenda(updatedAgenda);
+                    closeModal();
+                    break;
+                default:
+                    console.error(`Don't know how to handle the returned message!!! ${addAgendaItemStatusEnum}`)
+            }
         });
     }
 

@@ -63,9 +63,7 @@ export default class DateTimeService {
     }
 
     isFirstDateOnOrBeforeSecondDate(firstDate: Date, secondDate: Date): boolean {
-        return firstDate.getFullYear() <= secondDate.getFullYear() &&
-            firstDate.getMonth() <= secondDate.getMonth() &&
-            firstDate.getDate() <= secondDate.getDate();
+        return this.roundDateDownToDay(firstDate) <= this.roundDateDownToDay(secondDate);
     }
 
     /*

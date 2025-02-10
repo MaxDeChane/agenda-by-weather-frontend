@@ -1,28 +1,37 @@
 "use client"
 
-import React, {useEffect, useState} from "react";
-import AgendaCrudContext from "@/contexts/AgendaCrudContext";
+import React, {useContext, useEffect, useState} from "react";
+import AgendaContext, {AgendaContextInterface} from "@/contexts/agenda-context";
+import HeaderView from "@/components/header-view";
+import Agenda from "@/domain/agenda";
+import AgendaWeatherDao from "@/dao/agenda-weather-dao";
+
+const agendaWeatherDao = AgendaWeatherDao.instance;
 
 export default function AgendaByWeatherLayout({children,}: { children: React.ReactNode}) {
-    const [showAddAgendaItemView, setShowAddAgendaItemView] = useState(false);
 
-    const handleAddAgendaItemClicked = () => {
-        if(!showAddAgendaItemView) {
-            setShowAddAgendaItemView(true);
+    const [agenda, setAgenda] = useState<Agenda | null>(null)
+
+    const agendaContext = useContext(AgendaContext);
+
+    // Effect to do only on initial load
+    useEffect(() => {
+        if(!agenda) {
+            agendaWeatherDao.makeInitialRequest().then(agenda => {
+                setAgenda(agenda);
+            })
         }
-    }
+    }, [])
 
     return (
         <html lang="en">
         <body>
-            <header className="sticky top-0 h-10 w-full bg-amber-400">
-                <button onClick={handleAddAgendaItemClicked} className="h-5 bg-black">Add New Agenda Item</button>
-            </header>
-            <main>
-                <AgendaCrudContext.Provider value={{showAddAgendaItemView, setShowAddAgendaItemView}}>
+            <AgendaContext.Provider value={{agenda, setAgenda} as AgendaContextInterface}>
+                <HeaderView />
+                <main>
                     {children}
-                </AgendaCrudContext.Provider>
-            </main>
+                </main>
+            </AgendaContext.Provider>
         </body>
         </html>
     )

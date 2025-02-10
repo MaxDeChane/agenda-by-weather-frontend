@@ -1,36 +1,24 @@
-import React, {JSX, useContext, useEffect, useRef, useState} from "react";
-import Agenda from "@/domain/agenda";
+import React, {JSX, useContext, useRef} from "react";
 import HourlyWeatherAgendaRowView from "@/components/hourly-weather-agenda-row-view";
 import GeneralWeatherView from "@/components/general-weather-view";
-import AddAgendaView from "@/components/add-agenda-view";
-import AgendaCrudContext from "@/contexts/AgendaCrudContext";
+import AgendaContext from "@/contexts/agenda-context";
 
-export type HourlyViewInput = {
-    readonly agenda: Agenda;
-}
 
-export default function HourlyView({agenda}: HourlyViewInput) {
-
-    const [agendaItems, setAgendaItems] = useState(() => {
-        if(agenda.agendaItems) {
-            return agenda.agendaItems;
-        }
-
-        return []
-    });
+export default function HourlyView() {
 
     const generalWeatherPeriodsIndexRef = useRef(0);
+    const {agenda} = useContext(AgendaContext);
 
-    const {showAddAgendaItemView} = useContext(AgendaCrudContext);
+    // If no agenda set yet on the context then just return blank but should get here in that case so log it.
+    if(!agenda) {
+        console.error("No agenda set so this component shouldn't be called. Setting to empty for now but should investigate.")
+        return <></>
+    }
 
     let hourlyWeatherForecast = agenda.hourlyWeatherForecast;
     let generalWeatherForecast = agenda.generalWeatherForecast;
 
     let elementToDisplay: JSX.Element | undefined;
-
-    const addAgendaItemView = showAddAgendaItemView ?
-        <AddAgendaView agendaLatLon={agenda.latLon} agendaItems={agendaItems} setAgendaItems={setAgendaItems} />
-        : <></>;
 
     if (hourlyWeatherForecast && hourlyWeatherForecast.properties && hourlyWeatherForecast.properties.periods) {
         generalWeatherPeriodsIndexRef.current = 0;
@@ -48,7 +36,6 @@ export default function HourlyView({agenda}: HourlyViewInput) {
     }
 
     return <>
-            {addAgendaItemView}
             {elementToDisplay}
         </>
 }

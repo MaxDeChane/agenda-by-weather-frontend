@@ -1,6 +1,7 @@
-import {FormEvent, useEffect, useRef, useState} from "react";
+import {FormEvent, useContext, useEffect, useRef, useState} from "react";
 import AgendaWeatherDao from "@/dao/agenda-weather-dao";
 import Agenda from "@/domain/agenda";
+import AgendaContext from "@/contexts/agenda-context";
 
 const WELCOME_MESSAGE = `Hello and welcome to the Agenda by Weather application. This application aims to help plan your agenda around the weather.
 To do that, the application will need to know the location to collect the weather data from. For this please enter in an address that can be used to
@@ -9,17 +10,14 @@ Note: that the accuracy of the address will also determine the accuracy of your 
 
 const agendaWeatherDao = AgendaWeatherDao.instance;
 
-export type UserInfoViewInput = {
-    readonly setAgenda: (agenda: Agenda) => void;
-
-}
-
-export default function UserInfoView({setAgenda}: UserInfoViewInput) {
+export default function UserInfoView() {
    const [messageToDisplay, setMessageToDisplay] = useState("");
 
    // start at one since the first letter is consumed by default.
    const welcomeMessageIndexRef = useRef(0);
    const justPrintOutTextRef = useRef(false);
+
+   const {setAgenda} = useContext(AgendaContext);
 
    useEffect(() => {
        if(!justPrintOutTextRef.current && welcomeMessageIndexRef.current < WELCOME_MESSAGE.length) {
@@ -46,6 +44,7 @@ export default function UserInfoView({setAgenda}: UserInfoViewInput) {
         if(address) {
             console.log(`Address to get latLon for is ${address}`);
             agendaWeatherDao.updateLatLonOnDefaultAgendaByAddress(address as string).then(updatedAgenda => {
+                // Will kick off the useEffect in the main layout.tsx which will refresh everything.
                 setAgenda(updatedAgenda);
             });
         }

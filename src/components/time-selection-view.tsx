@@ -97,9 +97,9 @@ export default function TimeSelectionView({startDate, endDate, setStartDate, set
                         className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                         Start date:
-                        <button className="pl-1 text-blue-600 hover:text-blue-700 focus:outline-none">
+                        <span className="pl-1 text-blue-600 hover:text-blue-700 focus:outline-none">
                             {startDate.toLocaleDateString()}
-                        </button>
+                        </span>
                     </p>
                     {showStartDateSelection && (
                         <div className="absolute z-10 mt-2">
@@ -118,9 +118,9 @@ export default function TimeSelectionView({startDate, endDate, setStartDate, set
                         className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                         End date:
-                        <button className="pl-1 text-blue-600 hover:text-blue-700 focus:outline-none">
+                        <span className="pl-1 text-blue-600 hover:text-blue-700 focus:outline-none">
                             {endDate.toLocaleDateString()}
-                        </button>
+                        </span>
                     </p>
                     {showEndDateSelection && (
                         <div className="absolute z-10 mt-2">

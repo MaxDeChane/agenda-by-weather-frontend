@@ -1,8 +1,9 @@
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import TimeSelectionView from "@/components/time-selection-view";
 import DateTimeService from "@/service/date-time-service";
 import {AgendaItem} from "@/domain/agenda";
 import AgendaWeatherDao from "@/dao/agenda-weather-dao";
+import AgendaCrudContext from "@/contexts/AgendaCrudContext";
 
 const dateTimeService = DateTimeService.instance;
 const agendaWeatherDao = AgendaWeatherDao.instance;
@@ -11,10 +12,9 @@ export type AddAgendaViewInput = {
     readonly agendaLatLon: string;
     readonly agendaItems: Array<AgendaItem>;
     readonly setAgendaItems: (agendaItems: Array<AgendaItem>) => void;
-    readonly setShowAddAgendaItemView: (showAddAgendaItemView: boolean) => void
 }
 
-export default function AddAgendaView({agendaLatLon, agendaItems, setAgendaItems, setShowAddAgendaItemView}: AddAgendaViewInput) {
+export default function AddAgendaView({agendaLatLon, agendaItems, setAgendaItems}: AddAgendaViewInput) {
 
     const [name, setName] = useState(() => "");
     const [startDate, setStartDate] = useState(() => dateTimeService.roundDateUpToFifteenMinuteInterval(new Date()));
@@ -24,6 +24,8 @@ export default function AddAgendaView({agendaLatLon, agendaItems, setAgendaItems
 
         return endDate;
     });
+
+    const {setShowAddAgendaItemView} = useContext(AgendaCrudContext);
 
     const handleAgendaNameInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault();

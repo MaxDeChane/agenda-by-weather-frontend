@@ -25,5 +25,9 @@ export default function Page() {
         }
     }, [agenda])
 
-    return (!agenda) ? <h1>Loading...</h1> : (agenda.latLon) ? <HourlyView agenda={agenda} /> : <UserInfoView setAgenda={setAgenda}></UserInfoView>
+    return (!agenda) ?
+        <h1>Loading...</h1> : (agenda.latLon) ?
+            <HourlyView agenda={agenda} />
+            :
+            <UserInfoView setAgenda={setAgenda}></UserInfoView>
 }

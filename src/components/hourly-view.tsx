@@ -1,8 +1,9 @@
-import React, {JSX, useRef, useState} from "react";
+import React, {JSX, useContext, useEffect, useRef, useState} from "react";
 import Agenda from "@/domain/agenda";
 import HourlyWeatherAgendaRowView from "@/components/hourly-weather-agenda-row-view";
 import GeneralWeatherView from "@/components/general-weather-view";
 import AddAgendaView from "@/components/add-agenda-view";
+import AgendaCrudContext from "@/contexts/AgendaCrudContext";
 
 export type HourlyViewInput = {
     readonly agenda: Agenda;
@@ -10,7 +11,6 @@ export type HourlyViewInput = {
 
 export default function HourlyView({agenda}: HourlyViewInput) {
 
-    const [showAddAgendaItemView, setShowAddAgendaItemView] = useState(false);
     const [agendaItems, setAgendaItems] = useState(() => {
         if(agenda.agendaItems) {
             return agenda.agendaItems;
@@ -21,18 +21,15 @@ export default function HourlyView({agenda}: HourlyViewInput) {
 
     const generalWeatherPeriodsIndexRef = useRef(0);
 
+    const {showAddAgendaItemView} = useContext(AgendaCrudContext);
+
     let hourlyWeatherForecast = agenda.hourlyWeatherForecast;
     let generalWeatherForecast = agenda.generalWeatherForecast;
 
     let elementToDisplay: JSX.Element | undefined;
 
-    const addAgendaItemClicked = () => {
-        setShowAddAgendaItemView(!showAddAgendaItemView);
-    }
-
     const addAgendaItemView = showAddAgendaItemView ?
-        <AddAgendaView agendaLatLon={agenda.latLon} agendaItems={agendaItems} setAgendaItems={setAgendaItems}
-                       setShowAddAgendaItemView={setShowAddAgendaItemView}/>
+        <AddAgendaView agendaLatLon={agenda.latLon} agendaItems={agendaItems} setAgendaItems={setAgendaItems} />
         : <></>;
 
     if (hourlyWeatherForecast && hourlyWeatherForecast.properties && hourlyWeatherForecast.properties.periods) {
@@ -51,9 +48,6 @@ export default function HourlyView({agenda}: HourlyViewInput) {
     }
 
     return <>
-    <header className="sticky top-0 h-10 w-full bg-amber-400">
-                <button onClick={addAgendaItemClicked} className="h-5 bg-black">Add New Agenda Item</button>
-            </header>
             {addAgendaItemView}
             {elementToDisplay}
         </>

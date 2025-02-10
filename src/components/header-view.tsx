@@ -11,7 +11,7 @@ export default function HeaderView() {
     const closeModal = () => setOpenModal(null);
 
     return (
-        <header className="sticky top-0 h-[15vh] bg-gray-50 border-b border-gray-200 flex flex-col justify-end">
+        <header className="sticky top-0 h-[15vh] bg-gradient-to-l from-[#4A90E2] to-[#6BB9F0] border-b border-gray-200 flex flex-col justify-end">
             {/* Bottom section with clickable text elements */}
             <nav className="container mx-auto px-4 py-6 flex justify-between items-end">
                 {/* Left-aligned logo or brand name */}

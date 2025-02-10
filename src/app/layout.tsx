@@ -28,7 +28,7 @@ export default function AgendaByWeatherLayout({children,}: { children: React.Rea
         <body>
             <AgendaContext.Provider value={{agenda, setAgenda} as AgendaContextInterface}>
                 <HeaderView />
-                <main>
+                <main className="bg-gray-400 text-black">
                     {children}
                 </main>
             </AgendaContext.Provider>

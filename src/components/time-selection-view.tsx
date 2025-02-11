@@ -4,14 +4,13 @@ import CalendarView from "@/components/calendar-view";
 
 const dateTimeService = DateTimeService.instance;
 
-export type TimeSelectionView = {
+export type TimeSelectionViewInput = {
     readonly startDate: Date;
     readonly endDate: Date;
-    readonly setStartDate: (startDate: Date) => void;
-    readonly setEndDate: (startDate: Date) => void;
+    readonly dateUpdateHandle:(startDateTime: Date, endDateTime: Date) => void;
 }
 
-export default function TimeSelectionView({startDate, endDate, setStartDate, setEndDate}: TimeSelectionView) {
+export default function TimeSelectionView({startDate, endDate, dateUpdateHandle}: TimeSelectionViewInput) {
     const [selectedStartTimeIndex, setSelectedStartTimeIndex] = useState(() => dateTimeService.retrieve15MinuteTimeDisplayIndexForDateAfterItWasRounded(startDate));
     const [selectedEndTimeIndex, setSelectedEndTimeIndex] = useState(() => dateTimeService.retrieve15MinuteTimeDisplayIndexForDateAfterItWasRounded(endDate));
     const [showStartDateSelection, setShowStartDateSelection] = useState(() => false);
@@ -43,10 +42,11 @@ export default function TimeSelectionView({startDate, endDate, setStartDate, set
     useEffect(() => {
         // Add this in the effect so the start date will always be before the end date.
         if(selectedEndTimeIndex <= selectedStartTimeIndex) {
-            const clonedDate = new Date(startDate);
-            clonedDate.setMinutes(clonedDate.getMinutes() + 30);
-            setEndDate(clonedDate);
-            setSelectedEndTimeIndex(dateTimeService.retrieve15MinuteTimeDisplayIndexForDateAfterItWasRounded(clonedDate));
+            const newEndDate = new Date(startDate);
+            newEndDate.setMinutes(newEndDate.getMinutes() + 30);
+            // Set updated end date.
+            dateUpdateHandle(startDate, newEndDate);
+            setSelectedEndTimeIndex(dateTimeService.retrieve15MinuteTimeDisplayIndexForDateAfterItWasRounded(newEndDate));
         }
     }, [selectedStartTimeIndex, selectedEndTimeIndex])
 
@@ -59,21 +59,21 @@ export default function TimeSelectionView({startDate, endDate, setStartDate, set
     }
 
     const handleStartDateSelected = (selectedStartDate: Date) => {
-        setStartDate(selectedStartDate);
-
+        let updatedEndDateIfNeeded = endDate;
         if(!dateTimeService.isFirstDateOnOrBeforeSecondDate(selectedStartDate, endDate)) {
-            setEndDate(new Date(selectedStartDate));
+            updatedEndDateIfNeeded = new Date(selectedStartDate);
         }
-
+        dateUpdateHandle(selectedStartDate, updatedEndDateIfNeeded);
         setShowStartDateSelection(false);
     }
 
     const handleEndDateSelected = (selectedEndDate: Date) => {
+        let updatedStartDateIfNeeded = startDate;
         if(!dateTimeService.isFirstDateOnOrBeforeSecondDate(startDate, selectedEndDate)) {
-            setStartDate(new Date(selectedEndDate));
+            updatedStartDateIfNeeded = new Date(selectedEndDate);
         }
 
-        setEndDate(selectedEndDate);
+        dateUpdateHandle(updatedStartDateIfNeeded, selectedEndDate);
         setShowEndDateSelection(false);
     }
 
@@ -84,17 +84,17 @@ export default function TimeSelectionView({startDate, endDate, setStartDate, set
         clonedStartDate.setMinutes(metricTimeAndTimeDisplayHolders[startTimeIndex].minutes);
 
         setSelectedStartTimeIndex(startTimeIndex);
-        setStartDate(clonedStartDate);
+        dateUpdateHandle(clonedStartDate, endDate);
     };
 
     const handleEndTimeSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const endTimeIndex = Number(event.target.value);
-        const clonedDate = new Date(endDate);
-        clonedDate.setHours(metricTimeAndTimeDisplayHolders[endTimeIndex].hours);
-        clonedDate.setMinutes(metricTimeAndTimeDisplayHolders[endTimeIndex].minutes);
+        const clonedEndDate = new Date(endDate);
+        clonedEndDate.setHours(metricTimeAndTimeDisplayHolders[endTimeIndex].hours);
+        clonedEndDate.setMinutes(metricTimeAndTimeDisplayHolders[endTimeIndex].minutes);
 
         setSelectedEndTimeIndex(endTimeIndex);
-        setEndDate(clonedDate);
+        dateUpdateHandle(startDate, clonedEndDate);
     };
 
     const createTimeDisplayElements = (isStartTime: boolean) => {

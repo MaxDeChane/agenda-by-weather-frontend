@@ -2,6 +2,7 @@
 'use client'; // Mark as a Client Component
 import React, { useState } from 'react';
 import AddAgendaView from "@/components/add-agenda-view";
+import AllAgendaItemDisplayView from "@/components/all-agenda-item-display-view";
 
 export default function HeaderView() {
     // State to manage which modal is open
@@ -32,6 +33,12 @@ export default function HeaderView() {
                         Add Agenda Item
                     </button>
                     <button
+                        onClick={() => setOpenModal('agendaItems')}
+                        className="text-gray-700 hover:text-gray-900 transition-colors"
+                    >
+                        Agenda Items
+                    </button>
+                    <button
                         onClick={() => setOpenModal('contact')}
                         className="text-gray-700 hover:text-gray-900 transition-colors"
                     >
@@ -53,6 +60,12 @@ export default function HeaderView() {
                 </Modal>
             )}
 
+            {openModal === 'agendaItems' && (
+                <Modal onClose={closeModal} title="Agenda Items">
+                    <AllAgendaItemDisplayView closeModal={closeModal} />
+                </Modal>
+            )}
+
             {openModal === 'contact' && (
                 <Modal onClose={closeModal} title="Contact">
                     <p>This is the Contact modal content.</p>
@@ -65,7 +78,7 @@ export default function HeaderView() {
 // Reusable Modal Component
 const Modal = ({onClose, title, children}: { onClose: () => void; title: string; children: React.ReactNode}) => {
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-black">
+        <div className="fixed inset-0 max-h-[90vh] overflow-y-auto bg-black bg-opacity-50 flex justify-center items-center text-black">
             <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold">{title}</h2>

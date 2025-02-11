@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import DateTimeService, {metricTimeAndTimeDisplayHolders} from "@/service/date-time-service";
 import CalendarView from "@/components/calendar-view";
 
@@ -16,6 +16,29 @@ export default function TimeSelectionView({startDate, endDate, setStartDate, set
     const [selectedEndTimeIndex, setSelectedEndTimeIndex] = useState(() => dateTimeService.retrieve15MinuteTimeDisplayIndexForDateAfterItWasRounded(endDate));
     const [showStartDateSelection, setShowStartDateSelection] = useState(() => false);
     const [showEndDateSelection, setShowEndDateSelection] = useState(() => false);
+
+    const calendarStartDivRef = useRef<HTMLDivElement>(null);
+    const calendarEndDivRef = useRef<HTMLDivElement>(null);
+
+    // Handle so clicks outside the calendar views close them.
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            // Check if the click is outside the referenced component
+            if (calendarStartDivRef.current && !calendarStartDivRef.current.contains(event.target as Node)) {
+                setShowStartDateSelection(false); // Hide the component
+            } else if (calendarEndDivRef.current && !calendarEndDivRef.current.contains(event.target as Node)) {
+                setShowEndDateSelection(false); // Hide the component
+            }
+        };
+
+        // Add event listener when the component mounts
+        document.addEventListener('mousedown', handleClickOutside);
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     useEffect(() => {
         // Add this in the effect so the start date will always be before the end date.
@@ -102,7 +125,7 @@ export default function TimeSelectionView({startDate, endDate, setStartDate, set
                         </span>
                     </p>
                     {showStartDateSelection && (
-                        <div className="absolute z-10 mt-2">
+                        <div ref={calendarStartDivRef} className="absolute z-10 mt-2">
                             <CalendarView
                                 initialSelectedDate={startDate}
                                 daySelectedHandle={handleStartDateSelected}
@@ -123,7 +146,7 @@ export default function TimeSelectionView({startDate, endDate, setStartDate, set
                         </span>
                     </p>
                     {showEndDateSelection && (
-                        <div className="absolute z-10 mt-2">
+                        <div ref={calendarEndDivRef} className="absolute z-10 mt-2">
                             <CalendarView
                                 initialSelectedDate={endDate}
                                 daySelectedHandle={handleEndDateSelected}

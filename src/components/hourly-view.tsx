@@ -20,12 +20,10 @@ export default function HourlyView() {
     let hourlyWeatherForecast = agenda.hourlyWeatherForecast;
     let generalWeatherForecast = agenda.generalWeatherForecast;
 
-    let elementToDisplay: JSX.Element | undefined;
-
     if (hourlyWeatherForecast && hourlyWeatherForecast.properties && hourlyWeatherForecast.properties.periods) {
         generalWeatherPeriodsIndexRef.current = 0;
-        elementToDisplay =
-            <div className="grid grid-flow-row min-h-screen divide-y">
+
+        return <div className="grid grid-flow-row min-h-screen divide-y">
                 {hourlyWeatherForecast.properties.periods.map((weatherPeriod, index) => {
                     return <span key={`WeatherDisplayRowPeriod-${weatherPeriod.startTime}`}>
                         <GeneralWeatherView generalWeatherForecast={generalWeatherForecast}
@@ -37,7 +35,5 @@ export default function HourlyView() {
             </div>
     }
 
-    return <>
-            {elementToDisplay}
-        </>
+    return <></>
 }

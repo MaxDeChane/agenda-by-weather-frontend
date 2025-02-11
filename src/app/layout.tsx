@@ -1,9 +1,9 @@
 "use client"
 
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import AgendaContext, {AgendaContextInterface} from "@/contexts/agenda-context";
 import HeaderView from "@/components/header-view";
-import Agenda from "@/domain/agenda";
+import Agenda, {AgendaItem} from "@/domain/agenda";
 import AgendaWeatherDao from "@/dao/agenda-weather-dao";
 
 const agendaWeatherDao = AgendaWeatherDao.instance;
@@ -12,13 +12,22 @@ export default function AgendaByWeatherLayout({children,}: { children: React.Rea
 
     const [agenda, setAgenda] = useState<Agenda | null>(null)
 
-    const agendaContext = useContext(AgendaContext);
-
     // Effect to do only on initial load
     useEffect(() => {
         if(!agenda) {
             agendaWeatherDao.makeInitialRequest().then(agenda => {
-                setAgenda(agenda);
+                // Make the date actual Date objects and sort the agenda items before setting the agenda.
+                const sortedAgendaItems = agenda.agendaItems
+                    .map((agendaItem) => {
+                        return {
+                            ...agendaItem,
+                            startDateTime: new Date(agendaItem.startDateTime),
+                            endDateTime: new Date(agendaItem.endDateTime)
+                        }
+                    })
+                    .sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
+
+                setAgenda({...agenda, agendaItems: sortedAgendaItems});
             })
         }
     }, [])

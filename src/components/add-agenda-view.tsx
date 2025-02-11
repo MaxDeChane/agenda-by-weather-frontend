@@ -54,6 +54,7 @@ export default function AddAgendaView({closeModal}: AddAgendaViewInput) {
                     } else {
                         updatedAgenda = {...agenda} as Agenda;
                         updatedAgenda.agendaItems.push(agendaItem);
+                        agenda.agendaItems.sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime())
                     }
 
                     setAgenda(updatedAgenda);

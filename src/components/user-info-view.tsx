@@ -57,7 +57,7 @@ export default function UserInfoView() {
             <button id="addressInputSubmitButton" type="submit" className="bg-blue-950 ml-1">Submit</button>
         </form>
         :
-        <button onClick={() => justPrintOutTextRef.current = true} className="bg-blue-950">Just Print Out The Text!</button>;
+        <button onClick={() => justPrintOutTextRef.current = true} type="button">Just Print Out The Text!</button>;
 
     return <div className="grid justify-center">
         <div className="container sm">

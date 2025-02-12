@@ -23,7 +23,7 @@ export default function HourlyView() {
     if (hourlyWeatherForecast && hourlyWeatherForecast.properties && hourlyWeatherForecast.properties.periods) {
         generalWeatherPeriodsIndexRef.current = 0;
 
-        return <div className="grid grid-flow-row min-h-screen divide-y">
+        return <div className="grid grid-flow-row divide-y">
                 {hourlyWeatherForecast.properties.periods.map((weatherPeriod, index) => {
                     return <span key={`WeatherDisplayRowPeriod-${weatherPeriod.startTime}`}>
                         <GeneralWeatherView generalWeatherForecast={generalWeatherForecast}

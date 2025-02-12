@@ -64,6 +64,6 @@ export default class AgendaWeatherDao {
     }
 
     async addAgendaItemToAgendaByLatLon(latLon: string, agendaItem: AgendaItem): Promise<AddAgendaItemStatusEnum> {
-        return this.makeServiceRequest({url: AgendaWeatherDao.WEATHER_BASE_URL + '/agenda-item/' + latLon, method: 'Put', body: agendaItem});
+        return this.makeServiceRequest({url: AgendaWeatherDao.WEATHER_BASE_URL + '/' + latLon + '/agenda-item', method: 'Put', body: agendaItem});
     }
 }

@@ -1,5 +1,5 @@
 import Agenda, {AgendaItem} from "@/domain/agenda";
-import {AddAgendaItemStatusEnum} from "@/domain/add-agenda-item-status";
+import {AgendaItemCrudStatusEnum} from "@/domain/agenda-item-crud-status-enum";
 
 const fetch = require('fetch-retry')(global.fetch);
 
@@ -63,7 +63,15 @@ export default class AgendaWeatherDao {
         return this.makeServiceRequest({url: AgendaWeatherDao.WEATHER_BASE_URL + '/' + address, method: 'Put'});
     }
 
-    async addAgendaItemToAgendaByLatLon(latLon: string, agendaItem: AgendaItem): Promise<AddAgendaItemStatusEnum> {
+    async addAgendaItemToAgendaByLatLon(latLon: string, agendaItem: AgendaItem): Promise<AgendaItemCrudStatusEnum> {
         return this.makeServiceRequest({url: AgendaWeatherDao.WEATHER_BASE_URL + '/' + latLon + '/agenda-item', method: 'Put', body: agendaItem});
+    }
+
+    async updateAgendaItem(latLon: string, originalAgendaItemName: string, agendaItem: AgendaItem): Promise<AgendaItemCrudStatusEnum> {
+        return this.makeServiceRequest({url: AgendaWeatherDao.WEATHER_BASE_URL + '/' + latLon + '/agenda-item/' + originalAgendaItemName, method: 'Put', body: agendaItem});
+    }
+
+    async deleteAgendaItem(latLon: string, agendaItemName: string): Promise<AgendaItemCrudStatusEnum> {
+        return this.makeServiceRequest({url: AgendaWeatherDao.WEATHER_BASE_URL + '/' + latLon + '/agenda-item/' + agendaItemName, method: 'Delete'});
     }
 }

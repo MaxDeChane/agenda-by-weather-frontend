@@ -3,7 +3,7 @@ import DateTimeService from "@/service/date-time-service";
 import Agenda, {AgendaItem} from "@/domain/agenda";
 import AgendaWeatherDao from "@/dao/agenda-weather-dao";
 import AgendaContext from "@/contexts/agenda-context";
-import {AddAgendaItemStatusEnum} from "@/domain/add-agenda-item-status";
+import {AgendaItemCrudStatusEnum} from "@/domain/agenda-item-crud-status-enum";
 import AgendaItemFormView from "@/components/agenda-item-form-view";
 
 const dateTimeService = DateTimeService.instance;
@@ -41,7 +41,7 @@ export default function AddAgendaView({closeModal}: AddAgendaViewInput) {
             // TODO handle error cases here
 
             switch (addAgendaItemStatusEnum) {
-                case AddAgendaItemStatusEnum.ADDED:
+                case AgendaItemCrudStatusEnum.ADDED:
                     let updatedAgenda;
                     if(!agenda.agendaItems) {
                         updatedAgenda = {...agenda, agendaItems: [newAgendaItem]} as Agenda;

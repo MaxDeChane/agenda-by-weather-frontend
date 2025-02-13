@@ -1,4 +1,6 @@
 import {Period} from "@/domain/weather-forecast";
+import {useContext} from "react";
+import AgendaContext from "@/contexts/agenda-context";
 
 export type HourlyWeatherAgendaRowViewInput = {
     weatherPeriod: Period;

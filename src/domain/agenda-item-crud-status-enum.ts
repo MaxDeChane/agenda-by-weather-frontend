@@ -1,6 +1,7 @@
-export enum AddAgendaItemStatusEnum {
+export enum AgendaItemCrudStatusEnum {
     ADDED = "ADDED",
     ALREADY_EXISTS = "ALREADY_EXISTS",
+    DELETED = "DELETED",
     NO_AGENDA_WITH_LAT_LON = "NO_AGENDA_WITH_LAT_LON",
     NO_AGENDA_ITEM_WITH_NAME = "NO_AGENDA_ITEM_WITH_NAME",
     UPDATED = "UPDATED",

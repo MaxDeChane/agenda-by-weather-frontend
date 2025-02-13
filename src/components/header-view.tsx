@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import AddAgendaView from "@/components/add-agenda-view";
 import AllAgendaItemDisplayView from "@/components/all-agenda-item-display-view";
+import ModalView from "@/components/modal-view";
 
 export default function HeaderView() {
     // State to manage which modal is open
@@ -49,48 +50,28 @@ export default function HeaderView() {
 
             {/* Modals */}
             {openModal === 'about' && (
-                <Modal onClose={closeModal} title="About">
+                <ModalView onClose={closeModal} title="About">
                     <p>This is the About modal content.</p>
-                </Modal>
+                </ModalView>
             )}
 
             {openModal === 'addAgendaItem' && (
-                <Modal onClose={closeModal} title="Add Agenda Item">
+                <ModalView onClose={closeModal} title="Add Agenda Item">
                     <AddAgendaView closeModal={closeModal} />
-                </Modal>
+                </ModalView>
             )}
 
             {openModal === 'agendaItems' && (
-                <Modal onClose={closeModal} title="Agenda Items">
+                <ModalView onClose={closeModal} title="Agenda Items">
                     <AllAgendaItemDisplayView closeModal={closeModal} />
-                </Modal>
+                </ModalView>
             )}
 
             {openModal === 'contact' && (
-                <Modal onClose={closeModal} title="Contact">
+                <ModalView onClose={closeModal} title="Contact">
                     <p>This is the Contact modal content.</p>
-                </Modal>
+                </ModalView>
             )}
         </header>
-    );
-};
-
-// Reusable Modal Component
-const Modal = ({onClose, title, children}: { onClose: () => void; title: string; children: React.ReactNode}) => {
-    return (
-        <div className="fixed inset-0 max-h-[90vh] overflow-y-auto bg-black bg-opacity-50 flex justify-center items-center text-black">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold">{title}</h2>
-                    <button
-                        onClick={onClose}
-                        className="text-gray-500 hover:text-gray-700"
-                    >
-                        &times;
-                    </button>
-                </div>
-                <div>{children}</div>
-            </div>
-        </div>
     );
 };

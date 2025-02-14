@@ -1,11 +1,16 @@
 // components/Header.tsx
 'use client'; // Mark as a Client Component
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import AddAgendaView from "@/components/add-agenda-view";
 import AllAgendaItemDisplayView from "@/components/all-agenda-item-display-view";
 import ModalView from "@/components/modal-view";
+import {Period} from "@/domain/weather-forecast";
 
-export default function HeaderView() {
+export type HeaderViewInput = {
+    readonly currentWeather: Period | null;
+}
+
+export default function HeaderView({currentWeather}: HeaderViewInput) {
     // State to manage which modal is open
     const [openModal, setOpenModal] = useState<string | null>(null);
 
@@ -13,7 +18,17 @@ export default function HeaderView() {
     const closeModal = () => setOpenModal(null);
 
     return (
-        <header className="sticky top-0 h-[15vh] bg-gradient-to-l from-[#4A90E2] to-[#6BB9F0] border border-gray-200 flex flex-col justify-end">
+        <header className={`sticky top-0 h-[20vh] bg-gradient-to-l from-[#4A90E2] to-[#6BB9F0] border border-gray-200 flex flex-col justify-end`}>
+            {/* Weather Info */}
+            {currentWeather &&
+                <div className="flex flex-col justify-center items-center">
+                    <div className="text-white text-center">
+                        <p className="text-3xl font-semibold">{currentWeather.shortForecast}</p>
+                        <p className="text-2xl">{currentWeather.temperature}&deg;{currentWeather.temperatureUnit}</p>
+                        <p className="text-lg">{currentWeather.windSpeed} {currentWeather.windDirection}</p>
+                    </div>
+                </div>
+            }
             {/* Bottom section with clickable text elements */}
             <nav className="px-4 py-6 flex justify-between items-end">
                 {/* Left-aligned logo or brand name */}

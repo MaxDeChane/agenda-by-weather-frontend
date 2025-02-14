@@ -1,4 +1,4 @@
-import Agenda, {AgendaItem} from "@/domain/agenda";
+import Agenda, {agendaFromRestFactory, AgendaItem} from "@/domain/agenda";
 import {AgendaItemCrudStatusEnum} from "@/domain/agenda-item-crud-status-enum";
 
 const fetch = require('fetch-retry')(global.fetch);
@@ -56,7 +56,9 @@ export default class AgendaWeatherDao {
     }
     
     async makeInitialRequest(): Promise<Agenda> {
-        return this.makeServiceRequest({url: AgendaWeatherDao.WEATHER_BASE_URL, method: 'Get'});
+        return this.makeServiceRequest({url: AgendaWeatherDao.WEATHER_BASE_URL, method: 'Get'}).then((agenda) => {
+            return agendaFromRestFactory(agenda as Agenda);
+        });
     }
 
     async updateLatLonOnDefaultAgendaByAddress(address: string): Promise<Agenda> {

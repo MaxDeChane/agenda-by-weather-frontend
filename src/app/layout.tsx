@@ -3,7 +3,7 @@
 import React, {useEffect, useState} from "react";
 import AgendaContext, {AgendaContextInterface} from "@/contexts/agenda-context";
 import HeaderView from "@/components/header-view";
-import Agenda, {AgendaItem} from "@/domain/agenda";
+import Agenda, {agendaFromRestFactory} from "@/domain/agenda";
 import AgendaWeatherDao from "@/dao/agenda-weather-dao";
 
 const agendaWeatherDao = AgendaWeatherDao.instance;
@@ -16,24 +16,7 @@ export default function AgendaByWeatherLayout({children,}: { children: React.Rea
     useEffect(() => {
         if(!agenda) {
             agendaWeatherDao.makeInitialRequest().then(agenda => {
-
-                if(agenda.agendaItems) {
-                    // Make the date actual Date objects and sort the agenda items before setting the agenda.
-                    const sortedAgendaItems = agenda.agendaItems
-                        .map((agendaItem) => {
-                            return {
-                                ...agendaItem,
-                                startDateTime: new Date(agendaItem.startDateTime),
-                                endDateTime: new Date(agendaItem.endDateTime)
-                            }
-                        })
-                        .sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
-
-                    setAgenda({...agenda, agendaItems: sortedAgendaItems});
-                } else {
-                    // If agenda items is null or undefined then nothing to sort and just set the agenda
-                    setAgenda(agenda);
-                }
+                setAgenda(agenda);
             })
         }
     }, [])

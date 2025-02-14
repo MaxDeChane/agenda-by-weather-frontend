@@ -27,7 +27,7 @@ export default function GeneralWeatherView({
         if (index < periods.length) {
             let weatherPeriod = periods[index];
 
-            if (new Date(hourlyWeatherPeriod.startTime) >= new Date(weatherPeriod.startTime)) {
+            if (hourlyWeatherPeriod.startTime >= weatherPeriod.startTime) {
                 generalWeatherForecastPeriodIndexRef.current = index + 1;
                 setWeatherPeriod(weatherPeriod);
             }
@@ -38,8 +38,10 @@ export default function GeneralWeatherView({
     const agendaItemsInPeriod = generalWeatherPeriod
         ? agenda?.agendaItems.filter(
         (agendaItem) =>
-            agendaItem.startDateTime <= new Date(generalWeatherPeriod.startTime) &&
-            agendaItem.endDateTime >= new Date(generalWeatherPeriod.startTime)
+            (agendaItem.startDateTime <= generalWeatherPeriod.startTime &&
+            agendaItem.endDateTime >= generalWeatherPeriod.startTime) ||
+            (agendaItem.startDateTime >= generalWeatherPeriod.startTime &&
+                agendaItem.startDateTime <= generalWeatherPeriod.endTime)
     ) ?? []
         : [];
 
@@ -72,8 +74,9 @@ export default function GeneralWeatherView({
                                    text-gray-700 bg-white border-gray-300 hover:bg-gray-200
                                    focus:border-blue-500 active:border-blue-700 shadow"
                             >
-                                {item.name} <br/> ({new Date(item.startDateTime).toLocaleTimeString()} -{" "}
-                                {new Date(item.endDateTime).toLocaleTimeString()})
+                                {item.name} <br />
+                                ({item.startDateTime.toLocaleDateString()} {item.startDateTime.toLocaleTimeString()} -{" "}
+                                {item.endDateTime.toLocaleDateString()} {item.endDateTime.toLocaleTimeString()})
                             </button>
                         ))}
                     </div>

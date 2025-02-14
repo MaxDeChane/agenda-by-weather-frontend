@@ -3,7 +3,7 @@ import { RefObject, useContext, useEffect, useState } from "react";
 import AgendaContext from "@/contexts/agenda-context";
 
 export type GeneralWeatherViewInput = {
-    readonly generalWeatherForecast: WeatherForecast | undefined;
+    readonly generalWeatherForecast: WeatherForecast | null;
     readonly hourlyWeatherPeriod: Period;
     readonly generalWeatherForecastPeriodIndexRef: RefObject<number>;
 };

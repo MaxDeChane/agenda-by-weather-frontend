@@ -10,10 +10,11 @@ import ConfirmDialogView from "@/components/confirm-dialog-view";
 const agendaWeatherDao = AgendaWeatherDao.instance;
 
 export type AllAgendaItemDisplayViewInput = {
+    readonly showAddAgenda: () => void
     readonly closeModal: () => void;
 }
 
-export default function AllAgendaItemDisplayView({closeModal}: AllAgendaItemDisplayViewInput) {
+export default function AllAgendaItemDisplayView({showAddAgenda, closeModal}: AllAgendaItemDisplayViewInput) {
 
     const [selectedItemAndIndex, setSelectedItemAndIndex] = useState<{selectedItem: AgendaItem, index: number} | null>(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -71,18 +72,45 @@ export default function AllAgendaItemDisplayView({closeModal}: AllAgendaItemDisp
         setShowDeleteConfirmation(false);
     }
 
+    const handleEditClicked = () => {
+        // Set a small timeout here to prevent double clicks since
+        // the save button will render right where the edit button
+        // was which can cause it.
+        setTimeout(() => {
+            setIsEditing(true);
+        }, 100);
+    }
+
     const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        if (selectedItemAndIndex) {
+            const selectedItem = selectedItemAndIndex.selectedItem;
+            console.log(`Attempting to update agenda item: ${selectedItem.name}`);
+            agendaWeatherDao.updateAgendaItem(agenda.latLon, agenda.agendaItems[selectedItemAndIndex.index].name, selectedItem).then((agendaItemCrudStatusEnum) => {
+                if(agendaItemCrudStatusEnum === AgendaItemCrudStatusEnum.UPDATED) {
+                    agenda.agendaItems[selectedItemAndIndex.index] = selectedItemAndIndex.selectedItem;
+                    setAgenda({...agenda});
+                    setSelectedItemAndIndex(null);
+                    setIsEditing(false);
+                    console.log(`Agenda item has been updated.`);
+                }
+            });
+        } else {
+            console.error("Selected item doesn't exist here when it should.")
+        }
     }
 
     return (selectedItemAndIndex ?
             <AgendaItemFormView agendaItem={selectedItemAndIndex.selectedItem} setAgendaItem={handleItemSelect}
                                 onSubmit={handleOnSubmit}>
+                {/*Make sure to confirm deletion before just deleting*/}
                 {showDeleteConfirmation &&
                     <ModalView onClose={handleDeleteConfirmationCancel} title="">
-                        <ConfirmDialogView message="Are you sure you want to delete this item? This action cannot be undone!"
-                                           onConfirm={handleDeleteConfirmed}
-                                           onCancel={handleDeleteConfirmationCancel} />
+                        <ConfirmDialogView
+                            message="Are you sure you want to delete this item? This action cannot be undone!"
+                            onConfirm={handleDeleteConfirmed}
+                            onCancel={handleDeleteConfirmationCancel}/>
                     </ModalView>
                 }
 
@@ -118,7 +146,7 @@ export default function AllAgendaItemDisplayView({closeModal}: AllAgendaItemDisp
                     ) : (
                         <button
                             type="button"
-                            onClick={() => setIsEditing(true)}
+                            onClick={() => handleEditClicked()}
                             className="px-4 py-2 bg-green-500 text-white rounded"
                         >
                             Edit
@@ -128,21 +156,35 @@ export default function AllAgendaItemDisplayView({closeModal}: AllAgendaItemDisp
             </AgendaItemFormView>
             :
             <div className="relative h-[400px] flex flex-col">
-                {/* Scrollable content */}
-                <div className="flex-1 overflow-y-auto space-y-4">
-                    {agenda?.agendaItems.map((item, index) => (
-                        <div
-                            key={item.name}
-                            onClick={() => setSelectedItemAndIndex({selectedItem: item, index})}
-                            className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
+                {agenda.agendaItems && agenda.agendaItems.length > 0 ? (
+                    // Scrollable content if there are agenda items.
+                    <div className="flex-1 overflow-y-auto space-y-4">
+                        {agenda.agendaItems.map((item, index) => (
+                            <div
+                                key={item.name}
+                                onClick={() => setSelectedItemAndIndex({selectedItem: item, index})}
+                                className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
+                            >
+                                <h3 className="font-semibold">{item.name}</h3>
+                                <p>
+                                    {item.startDateTime.toLocaleDateString()} - {item.endDateTime.toLocaleDateString()}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    // Display message and "Add Agenda Item" button if no items exist
+                    <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
+                        <p className="text-gray-500 text-lg">No upcoming agenda items</p>
+                        <button
+                            type="button"
+                            onClick={showAddAgenda} // Replace with actual function
+                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
                         >
-                            <h3 className="font-semibold">{item.name}</h3>
-                            <p>
-                                {item.startDateTime.toLocaleDateString()} - {item.endDateTime.toLocaleDateString()}
-                            </p>
-                        </div>
-                    ))}
-                </div>
+                            Add Agenda Item
+                        </button>
+                    </div>
+                )}
 
                 {/* Sticky Close button */}
                 <div className="absolute bottom-0 left-0 w-full bg-white p-4 shadow-md">

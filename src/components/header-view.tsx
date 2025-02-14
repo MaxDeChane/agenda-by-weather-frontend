@@ -63,7 +63,7 @@ export default function HeaderView() {
 
             {openModal === 'agendaItems' && (
                 <ModalView onClose={closeModal} title="Agenda Items">
-                    <AllAgendaItemDisplayView closeModal={closeModal} />
+                    <AllAgendaItemDisplayView showAddAgenda={() => setOpenModal('addAgendaItem')} closeModal={closeModal} />
                 </ModalView>
             )}
 

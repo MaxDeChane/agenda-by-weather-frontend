@@ -1,15 +1,15 @@
 import {Period} from "@/domain/weather-forecast";
-import {useContext} from "react";
-import AgendaContext from "@/contexts/agenda-context";
+import React from "react";
 
 export type HourlyWeatherAgendaRowViewInput = {
     weatherPeriod: Period;
     index: number;
+    children: React.ReactNode
 }
 
-export default function HourlyWeatherAgendaRowView({weatherPeriod, index}: HourlyWeatherAgendaRowViewInput) {
+export default function HourlyWeatherAgendaRowView({weatherPeriod, index, children}: HourlyWeatherAgendaRowViewInput) {
     return <div key={`ForecastDisplayRowDiv${index}`} className="grid grid-cols-[1fr_7fr] divide-x">
-        <div className="grid justify-center">
+        <div className="pl-1">
             <p>{new Date(weatherPeriod.startTime).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})}</p>
             <p>{weatherPeriod.shortForecast}</p>
             <p>T: {weatherPeriod.temperature}&deg;{weatherPeriod.temperatureUnit}</p>
@@ -17,7 +17,7 @@ export default function HourlyWeatherAgendaRowView({weatherPeriod, index}: Hourl
             <p>PoP: {weatherPeriod.probabilityOfPrecipitation.value}%</p>
         </div>
         <div>
-            Agenda items to go here
+            {children}
         </div>
     </div>;
 }

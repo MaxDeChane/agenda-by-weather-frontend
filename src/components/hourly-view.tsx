@@ -29,7 +29,9 @@ export default function HourlyView() {
                         <GeneralWeatherView generalWeatherForecast={generalWeatherForecast}
                                             hourlyWeatherPeriod={weatherPeriod}
                                             generalWeatherForecastPeriodIndexRef={generalWeatherPeriodsIndexRef}/>
-                        <HourlyWeatherAgendaRowView weatherPeriod={weatherPeriod} index={index}/>
+                        <HourlyWeatherAgendaRowView weatherPeriod={weatherPeriod} index={index}>
+                            <p>testholder</p>
+                        </HourlyWeatherAgendaRowView>
                     </span>
                 })}
             </div>

@@ -40,7 +40,7 @@ export default function AgendaByWeatherLayout({children,}: { children: React.Rea
 
     return (
         <html lang="en">
-        <body>
+        <body className="container mx-auto bg-gradient-to-l from-[#4A90E2] to-[#6BB9F0]">
             <AgendaContext.Provider value={{agenda, setAgenda} as AgendaContextInterface}>
                 <HeaderView />
                 <main className="min-h-screen bg-gray-400 text-black">

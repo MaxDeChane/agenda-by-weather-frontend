@@ -60,7 +60,7 @@ export default function AddAgendaView({closeModal}: AddAgendaViewInput) {
         });
     }
 
-    return <AgendaItemFormView agendaItem={newAgendaItem} setAgendaItem={setNewAgendaItem} onSubmit={handleAddClick}>
+    return <AgendaItemFormView disabled={false} agendaItem={newAgendaItem} setAgendaItem={setNewAgendaItem} onSubmit={handleAddClick}>
         {/* Buttons that will be different on the form based on whether adding new or editing and deleting.*/}
         <div className="flex space-x-4">
             <button

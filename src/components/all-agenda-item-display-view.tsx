@@ -22,7 +22,7 @@ export default function AllAgendaItemDisplayView({showAddAgenda, closeModal}: Al
 
     const { agenda, setAgenda } = useContext(AgendaContext);
 
-    // First off check that we have a agenda or agenda items to even work with.
+    // First off check that we have an agenda or agenda items to even work with.
     if(!agenda) {
         // TODO: add error when how that is handled gets added
         console.error("Agenda is null and that should not be the case here. Please investigate.");
@@ -102,7 +102,7 @@ export default function AllAgendaItemDisplayView({showAddAgenda, closeModal}: Al
     }
 
     return (selectedItemAndIndex ?
-            <AgendaItemFormView agendaItem={selectedItemAndIndex.selectedItem} setAgendaItem={handleItemSelect}
+            <AgendaItemFormView disabled={!isEditing} agendaItem={selectedItemAndIndex.selectedItem} setAgendaItem={handleItemSelect}
                                 onSubmit={handleOnSubmit}>
                 {/*Make sure to confirm deletion before just deleting*/}
                 {showDeleteConfirmation &&

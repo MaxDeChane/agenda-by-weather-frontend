@@ -1,15 +1,15 @@
-import WeatherForecast, { Period } from "@/domain/weather-forecast";
+import { Period } from "@/domain/weather-forecast";
 import { RefObject, useContext, useEffect, useState } from "react";
 import AgendaContext from "@/contexts/agenda-context";
 
 export type GeneralWeatherViewInput = {
-    readonly generalWeatherForecast: WeatherForecast | null;
+    readonly generalWeatherPeriods: Array<Period> | undefined;
     readonly hourlyWeatherPeriod: Period;
     readonly generalWeatherForecastPeriodIndexRef: RefObject<number>;
 };
 
 export default function GeneralWeatherView({
-                                               generalWeatherForecast,
+                                               generalWeatherPeriods,
                                                hourlyWeatherPeriod,
                                                generalWeatherForecastPeriodIndexRef,
                                            }: GeneralWeatherViewInput) {
@@ -19,13 +19,12 @@ export default function GeneralWeatherView({
     const [generalWeatherPeriod, setWeatherPeriod] = useState<Period | null>(null);
 
     useEffect(() => {
-        if (!generalWeatherForecast || !generalWeatherForecast.properties.periods) return;
+        if (!generalWeatherPeriods) return;
 
-        const periods = generalWeatherForecast.properties.periods;
         let index = generalWeatherForecastPeriodIndexRef.current ?? 0;
 
-        if (index < periods.length) {
-            let weatherPeriod = periods[index];
+        if (index < generalWeatherPeriods.length) {
+            let weatherPeriod = generalWeatherPeriods[index];
 
             if (hourlyWeatherPeriod.startTime >= weatherPeriod.startTime) {
                 generalWeatherForecastPeriodIndexRef.current = index + 1;

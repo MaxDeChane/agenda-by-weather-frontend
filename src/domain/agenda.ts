@@ -1,4 +1,7 @@
-import WeatherForecast, {weatherForecastFromRestFactory} from "@/domain/weather-forecast";
+import {
+    dayPeriodsFromRestFactory,
+    Period
+} from "@/domain/weather-forecast";
 
 export interface AgendaItem {
     readonly name: string;
@@ -6,17 +9,33 @@ export interface AgendaItem {
     readonly endDateTime: Date;
 }
 
+export interface AgendaDay {
+    readonly generalWeatherPeriods: Map<Date, Period>;
+    readonly hourlyWeatherPeriods: Map<Date, Period>;
+}
+
 export default interface Agenda {
     readonly latLon: string;
     readonly defaultAgenda: boolean;
     readonly agendaItems: Array<AgendaItem>;
-    readonly hourlyWeatherForecast: WeatherForecast | null;
-    readonly generalWeatherForecast: WeatherForecast | null;
+    readonly agendaDaysByDateString: Map<string, AgendaDay>
 }
 
 export const agendaFromRestFactory = (agenda: Agenda): Agenda => {
-    const convertedGeneralWeatherForecast = weatherForecastFromRestFactory(agenda.generalWeatherForecast);
-    const convertedHourlyWeatherForecast = weatherForecastFromRestFactory(agenda.hourlyWeatherForecast);
+    const convertedAgendaDaysByString =
+        new Map<string, AgendaDay>(Object.entries(agenda.agendaDaysByDateString)
+            .sort(([date1, agendaDay1], [date2, agendaDay2]) => {
+                return date1.localeCompare(date2);
+            })
+            .map(([date, agendaDay]) => {
+                const convertedGeneralWeatherPeriods = dayPeriodsFromRestFactory(agendaDay.generalWeatherPeriods);
+                const convertedHourlyWeatherForecast = dayPeriodsFromRestFactory(agendaDay.hourlyWeatherPeriods);
+
+                return [date, {
+                    generalWeatherPeriods: convertedGeneralWeatherPeriods,
+                    hourlyWeatherPeriods: convertedHourlyWeatherForecast
+                } as AgendaDay]
+            }));
 
     if(agenda.agendaItems) {
         // Make the date actual Date objects and sort the agenda items before setting the agenda.
@@ -30,7 +49,7 @@ export const agendaFromRestFactory = (agenda: Agenda): Agenda => {
             })
             .sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
 
-        return {...agenda, generalWeatherForecast: convertedGeneralWeatherForecast, hourlyWeatherForecast: convertedHourlyWeatherForecast, agendaItems: sortedAgendaItems};
+        return {...agenda, agendaDaysByDateString: convertedAgendaDaysByString, agendaItems: sortedAgendaItems};
     } else {
         // If agenda items is null or undefined then nothing to sort and just set the agenda
         return agenda;

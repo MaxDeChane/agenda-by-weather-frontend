@@ -6,8 +6,10 @@ import HeaderView from "@/components/header-view";
 import Agenda from "@/domain/agenda";
 import AgendaWeatherDao from "@/dao/agenda-weather-dao";
 import {Period} from "@/domain/weather-forecast";
+import DateTimeService from "@/service/date-time-service";
 
 const agendaWeatherDao = AgendaWeatherDao.instance;
+const dateTimeService = DateTimeService.instance;
 
 export default function AgendaByWeatherLayout({children,}: { children: React.ReactNode}) {
 
@@ -19,11 +21,17 @@ export default function AgendaByWeatherLayout({children,}: { children: React.Rea
         if(!agenda) {
             agendaWeatherDao.makeInitialRequest().then(agenda => {
                 setAgenda(agenda);
-                if(agenda.hourlyWeatherForecast) {
+                if(agenda.agendaDaysByDateString) {
                     const currentDateTime = new Date();
-                    const period = agenda.hourlyWeatherForecast.properties.periods.find((period) => {
-                        return period.startTime <= currentDateTime && period.endTime >= currentDateTime;
-                    })
+                    const currentAgendaDay = agenda.agendaDaysByDateString.get(dateTimeService.getDateStringFromDate(currentDateTime));
+                    let period;
+                    if(currentAgendaDay) {
+                        for (const periodToCheck of currentAgendaDay.hourlyWeatherPeriods.values()) {
+                            if (periodToCheck.startTime <= currentDateTime && periodToCheck.endTime >= currentDateTime) {
+                                period = periodToCheck
+                            }
+                        }
+                    }
                     setCurrentWeather(period ?? null)
                 }
             })

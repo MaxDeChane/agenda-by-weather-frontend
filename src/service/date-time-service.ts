@@ -66,6 +66,10 @@ export default class DateTimeService {
         return this.roundDateDownToDay(firstDate) <= this.roundDateDownToDay(secondDate);
     }
 
+    getDateStringFromDate(date: Date) {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+    }
+
     /*
     As the method says this method should only be called after the date has already been
     rounded to a 15 minute time otherwise the right index will most likely not be returned.

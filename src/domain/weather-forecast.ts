@@ -1,16 +1,3 @@
-import Agenda from "@/domain/agenda";
-
-export default interface WeatherForecast {
-    readonly type: 'Feature';
-    readonly properties: Properties;
-}
-
-export interface Properties {
-    generatedAt: Date;
-    updateTime: Date;
-    readonly periods: Array<Period>;
-}
-
 export interface Period {
     readonly number: number;
     readonly name: string;
@@ -38,35 +25,16 @@ export interface Period {
     readonly detailedForecast: string;
 }
 
-export const weatherForecastFromRestFactory = (weatherForecast: WeatherForecast | null): WeatherForecast | null => {
-    if(weatherForecast) {
-        const updatedProperties = propertiesFromRestFactory(weatherForecast.properties);
-        if(updatedProperties) {
-            return {...weatherForecast, properties: updatedProperties}
-        }
-    }
-
-    return null;
-}
-
-export const propertiesFromRestFactory = (properties: Properties | undefined): Properties | null => {
-    if(properties) {
-        const updatedPeriods = properties.periods.map((period) => {
-            return periodFromRestFactory(period);
-        })
-
-        if(updatedPeriods) {
-            return {
-                generatedAt: new Date(properties.generatedAt),
-                updateTime: new Date(properties.updateTime),
-                periods: updatedPeriods
-            }
-        }
-    }
-
-    return null;
-}
-
 export const periodFromRestFactory = (period: Period): Period => {
     return {...period, startTime: new Date(period.startTime), endTime: new Date(period.endTime)}
+}
+
+export const dayPeriodsFromRestFactory = (dayPeriods: Map<string, Period>) => {
+    return new Map<Date, Period>(Object.entries(dayPeriods)
+        .sort(([date1, period1], [date2, period2]) => {
+            return date1.localeCompare(date2);
+        })
+        .map(([time, period]) => {
+            return [new Date(time), periodFromRestFactory(period as Period)];
+        }));
 }

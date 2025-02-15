@@ -18,14 +18,20 @@ export default function HeaderView({currentWeather}: HeaderViewInput) {
     const closeModal = () => setOpenModal(null);
 
     return (
-        <header className={`sticky top-0 h-[20vh] bg-gradient-to-l from-[#4A90E2] to-[#6BB9F0] border border-gray-200 flex flex-col justify-end`}>
+        <header className={`sticky top-0 h-[30vh] bg-gradient-to-l from-[#4A90E2] to-[#6BB9F0] border border-gray-200 flex flex-col justify-end`}>
             {/* Weather Info */}
             {currentWeather &&
                 <div className="flex flex-col justify-center items-center">
                     <div className="text-white text-center">
-                        <p className="text-3xl font-semibold">{currentWeather.shortForecast}</p>
-                        <p className="text-2xl">{currentWeather.temperature}&deg;{currentWeather.temperatureUnit}</p>
-                        <p className="text-lg">{currentWeather.windSpeed} {currentWeather.windDirection}</p>
+                        {currentWeather ?
+                            <>
+                                <p className="text-3xl font-semibold">{currentWeather.shortForecast}</p>
+                                <p className="text-2xl">{currentWeather.temperature}&deg;{currentWeather.temperatureUnit}</p>
+                                <p className="text-lg">{currentWeather.windSpeed} {currentWeather.windDirection}</p>
+                            </>
+                            :
+                            <p className="text-3xl font-semibold">Loading...</p>
+                        }
                     </div>
                 </div>
             }

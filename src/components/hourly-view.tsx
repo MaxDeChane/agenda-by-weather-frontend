@@ -2,6 +2,7 @@ import React, {JSX, useContext, useRef} from "react";
 import HourlyWeatherAgendaRowView from "@/components/hourly-weather-agenda-row-view";
 import GeneralWeatherView from "@/components/general-weather-view";
 import AgendaContext from "@/contexts/agenda-context";
+import {Period} from "@/domain/weather-forecast";
 
 
 export default function HourlyView() {
@@ -17,16 +18,21 @@ export default function HourlyView() {
 
     console.log(`Agenda items are ${agenda.agendaItems}`)
 
-    let hourlyWeatherForecast = agenda.hourlyWeatherForecast;
-    let generalWeatherForecast = agenda.generalWeatherForecast;
+    let hourlyWeatherForecast = new Array<Period>();
+    let generalWeatherForecast = new Array<Period>();
 
-    if (hourlyWeatherForecast && hourlyWeatherForecast.properties && hourlyWeatherForecast.properties.periods) {
+    [...agenda.agendaDaysByDateString.values()].forEach(agenda => {
+        hourlyWeatherForecast.push(...agenda.hourlyWeatherPeriods.values());
+        generalWeatherForecast.push(...agenda.generalWeatherPeriods.values());
+    });
+
+    if (hourlyWeatherForecast) {
         generalWeatherPeriodsIndexRef.current = 0;
 
         return <div className="grid grid-flow-row divide-y">
-                {hourlyWeatherForecast.properties.periods.map((weatherPeriod, index) => {
+                {hourlyWeatherForecast.map((weatherPeriod, index) => {
                     return <span key={`WeatherDisplayRowPeriod-${weatherPeriod.startTime}`}>
-                        <GeneralWeatherView generalWeatherForecast={generalWeatherForecast}
+                        <GeneralWeatherView generalWeatherPeriods={generalWeatherForecast}
                                             hourlyWeatherPeriod={weatherPeriod}
                                             generalWeatherForecastPeriodIndexRef={generalWeatherPeriodsIndexRef}/>
                         <HourlyWeatherAgendaRowView weatherPeriod={weatherPeriod} index={index}>

@@ -54,7 +54,10 @@ export default function AllAgendaItemDisplayView({showAddAgenda, closeModal}: Al
 
     const handleDeleteConfirmed = () => {
         if (selectedItemAndIndex) {
-            const selectedItem = selectedItemAndIndex.selectedItem;
+            // Grab from the original just in case there were updates made to the
+            // selected agenda before the delete button was pressed and the name
+            // is lost.
+            const selectedItem = agenda.agendaItems[selectedItemAndIndex.index];
             console.log(`Attempting to delete agenda item: ${selectedItem.name}`);
             agendaWeatherDao.deleteAgendaItem(agenda.latLon, selectedItem.name).then((agendaItemCrudStatusEnum) => {
                 if(agendaItemCrudStatusEnum === AgendaItemCrudStatusEnum.DELETED) {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {AgendaItem} from "@/domain/agenda";
 import TimeSelectionView from "@/components/time-selection-view";
 
@@ -11,6 +11,7 @@ export type AgendaItemFormViewInput = {
 }
 
 export default function AgendaItemFormView({disabled, agendaItem, setAgendaItem, onSubmit, children}: AgendaItemFormViewInput) {
+    const [nameInvalid, setNameInvalid] = useState(false);
 
     const handleAgendaNameInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault();
@@ -21,9 +22,20 @@ export default function AgendaItemFormView({disabled, agendaItem, setAgendaItem,
         setAgendaItem({...agendaItem, startDateTime, endDateTime});
     }
 
-    return <form onSubmit={onSubmit} className="p-5 space-y-4 max-w-md mx-auto bg-white rounded-lg shadow-md">
+    const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        if(!agendaItem.name || agendaItem.name === "") {
+            event.preventDefault();
+            setNameInvalid(true);
+        } else {
+            onSubmit(event);
+        }
+    }
+
+    return <form onSubmit={handleOnSubmit} className="p-5 space-y-4 max-w-md mx-auto bg-white rounded-lg shadow-md">
         {/* Agenda Item Name Input */}
         <fieldset disabled={disabled}>
+            {nameInvalid && <p className="text-red-600">*Name is required.</p>}
+
             <div className="space-y-2">
                 <label htmlFor="agendaNameInput" className="block text-sm font-medium text-gray-700">
                     Agenda Item Name:

@@ -18,12 +18,12 @@ export default interface Agenda {
     readonly latLon: string;
     readonly defaultAgenda: boolean;
     readonly agendaItems: Array<AgendaItem>;
-    readonly agendaDaysByDateString: Map<string, AgendaDay>
+    readonly agendaDaysByDay: Map<string, AgendaDay>
 }
 
 export const agendaFromRestFactory = (agenda: Agenda): Agenda => {
-    const convertedAgendaDaysByString =
-        new Map<string, AgendaDay>(Object.entries(agenda.agendaDaysByDateString)
+    const convertedAgendaDaysByString = agenda.agendaDaysByDay &&
+        new Map<string, AgendaDay>(Object.entries(agenda.agendaDaysByDay)
             .sort(([date1, agendaDay1], [date2, agendaDay2]) => {
                 return date1.localeCompare(date2);
             })
@@ -49,7 +49,7 @@ export const agendaFromRestFactory = (agenda: Agenda): Agenda => {
             })
             .sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
 
-        return {...agenda, agendaDaysByDateString: convertedAgendaDaysByString, agendaItems: sortedAgendaItems};
+        return {...agenda, agendaDaysByDay: convertedAgendaDaysByString, agendaItems: sortedAgendaItems};
     } else {
         // If agenda items is null or undefined then nothing to sort and just set the agenda
         return agenda;

@@ -21,7 +21,7 @@ export default function HourlyView() {
     let hourlyWeatherForecast = new Array<Period>();
     let generalWeatherForecast = new Array<Period>();
 
-    [...agenda.agendaDaysByDateString.values()].forEach(agenda => {
+    [...agenda.agendaDaysByDay.values()].forEach(agenda => {
         hourlyWeatherForecast.push(...agenda.hourlyWeatherPeriods.values());
         generalWeatherForecast.push(...agenda.generalWeatherPeriods.values());
     });

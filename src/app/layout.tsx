@@ -21,9 +21,9 @@ export default function AgendaByWeatherLayout({children,}: { children: React.Rea
         if(!agenda) {
             agendaWeatherDao.makeInitialRequest().then(agenda => {
                 setAgenda(agenda);
-                if(agenda.agendaDaysByDateString) {
+                if(agenda.agendaDaysByDay) {
                     const currentDateTime = new Date();
-                    const currentAgendaDay = agenda.agendaDaysByDateString.get(dateTimeService.getDateStringFromDate(currentDateTime));
+                    const currentAgendaDay = agenda.agendaDaysByDay.get(dateTimeService.getDateStringFromDate(currentDateTime));
                     let period;
                     if(currentAgendaDay) {
                         for (const periodToCheck of currentAgendaDay.hourlyWeatherPeriods.values()) {

@@ -33,6 +33,10 @@ export default class AgendaWeatherDao {
             body: (request.body) ? JSON.stringify(request.body) : null
         })
             .then((response: any) => {
+                if(request.url === AgendaWeatherDao.WEATHER_BASE_URL && response.status === 404) {
+                    return null;
+                }
+
                 if(!response.ok) {
                     throw {response}
                 }
@@ -57,7 +61,8 @@ export default class AgendaWeatherDao {
     
     async makeInitialRequest(): Promise<Agenda> {
         return this.makeServiceRequest({url: AgendaWeatherDao.WEATHER_BASE_URL, method: 'Get'}).then((agenda) => {
-            return agendaFromRestFactory(agenda as Agenda);
+            // TODO add check that if null is returned that the service is up before returning an empty agenda
+            return agenda ? agendaFromRestFactory(agenda as Agenda) : {defaultAgenda: true} as Agenda;
         });
     }
 

@@ -1,6 +1,7 @@
 import { Period } from "@/domain/weather-forecast";
-import { RefObject, useContext, useEffect, useState } from "react";
+import {RefObject, useContext, useEffect, useRef, useState} from "react";
 import AgendaContext from "@/contexts/agenda-context";
+import DateTimeService from "@/service/date-time-service";
 
 export type GeneralWeatherViewInput = {
     readonly generalWeatherPeriods: Array<Period> | undefined;
@@ -8,11 +9,15 @@ export type GeneralWeatherViewInput = {
     readonly generalWeatherForecastPeriodIndexRef: RefObject<number>;
 };
 
+const dateTimeService = DateTimeService.instance;
+
 export default function GeneralWeatherView({
                                                generalWeatherPeriods,
                                                hourlyWeatherPeriod,
-                                               generalWeatherForecastPeriodIndexRef,
+                                               generalWeatherForecastPeriodIndexRef
                                            }: GeneralWeatherViewInput) {
+
+    const periodToScrollToRef = useRef<HTMLDivElement>(null);
     const { agenda } = useContext(AgendaContext);
 
     // State for the selected weather period
@@ -33,6 +38,20 @@ export default function GeneralWeatherView({
         }
     }, []);
 
+    // Once/if the general weather period is found check to see if
+    // it is the current one and if so, scroll to it.
+    useEffect(() => {
+        if(periodToScrollToRef.current) {
+            periodToScrollToRef.current.scrollIntoView(true);
+        }
+    }, [generalWeatherPeriod]);
+
+    const currentDate = new Date();
+
+    const isCurrentPeriod = generalWeatherPeriod &&
+        dateTimeService.isFirstDateTimeOnOrBeforeSecondDateTime(generalWeatherPeriod.startTime, currentDate) &&
+        dateTimeService.isFirstDateTimeBeforeSecondDateTime(currentDate, generalWeatherPeriod.endTime);
+
     // Filter agenda items within the selected period
     const agendaItemsInPeriod = generalWeatherPeriod
         ? agenda?.agendaItems.filter(
@@ -45,7 +64,7 @@ export default function GeneralWeatherView({
         : [];
 
     return generalWeatherPeriod ? (
-        <div className="grid justify-items-center border-b">
+        <div ref={isCurrentPeriod ? periodToScrollToRef : null} className="grid justify-items-center border-b">
             {/* Weather Information */}
             <p className="text-4xl">{generalWeatherPeriod.name}</p>
             <p className="text-2xl">{generalWeatherPeriod.shortForecast}</p>

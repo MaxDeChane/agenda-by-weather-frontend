@@ -40,11 +40,16 @@ export default function AgendaByWeatherLayout({children,}: { children: React.Rea
 
     return (
         <html lang="en">
-        <body className="container mx-auto bg-gradient-to-l from-[#4A90E2] to-[#6BB9F0]">
+        <body className="container mx-auto bg-gradient-to-l from-[#4A90E2] to-[#6BB9F0] overflow-y-hidden">
             <AgendaContext.Provider value={{agenda, setAgenda} as AgendaContextInterface}>
                 <HeaderView currentWeather={currentWeather}/>
-                <main className="min-h-screen bg-gray-400 text-black">
-                    {children}
+                <main>
+                    {/* Since the header takes up 20vh worth of the screen set this one to 80 to avoid
+                        scrolling items being behind the header and not working correctly with scroll to
+                        functionality. */}
+                    <div className="overflow-auto h-[80vh] bg-gray-400 text-black z-10">
+                        {children}
+                    </div>
                 </main>
             </AgendaContext.Provider>
         </body>

@@ -62,8 +62,16 @@ export default class DateTimeService {
             date.getHours(), date.getMinutes());
     }
 
+    isFirstDateTimeBeforeSecondDateTime(firstDate: Date, secondDate: Date): boolean {
+        return firstDate.getTime() < secondDate.getTime();
+    }
+
+    isFirstDateTimeOnOrBeforeSecondDateTime(firstDate: Date, secondDate: Date): boolean {
+        return firstDate.getTime() <= secondDate.getTime();
+    }
+
     isFirstDateOnOrBeforeSecondDate(firstDate: Date, secondDate: Date): boolean {
-        return this.roundDateDownToDay(firstDate) <= this.roundDateDownToDay(secondDate);
+        return this.roundDateDownToDay(firstDate).getTime() <= this.roundDateDownToDay(secondDate).getTime();
     }
 
     getDateStringFromDate(date: Date) {

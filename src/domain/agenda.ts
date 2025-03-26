@@ -24,7 +24,7 @@ export default interface Agenda {
 export const agendaFromRestFactory = (agenda: Agenda): Agenda => {
     const convertedAgendaDaysByString = agenda.agendaDaysByDay &&
         new Map<string, AgendaDay>(Object.entries(agenda.agendaDaysByDay)
-            .sort(([date1, agendaDay1], [date2, agendaDay2]) => {
+            .sort(([date1], [date2]) => {
                 return date1.localeCompare(date2);
             })
             .map(([date, agendaDay]) => {
